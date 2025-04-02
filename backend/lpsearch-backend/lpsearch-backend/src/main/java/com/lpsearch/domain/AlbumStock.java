@@ -2,8 +2,6 @@ package com.lpsearch.domain;
 
 import jakarta.persistence.*;
 
-import main.java.com.lpsearch.domain.Album;
-
 @Entity
 public class AlbumStock {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

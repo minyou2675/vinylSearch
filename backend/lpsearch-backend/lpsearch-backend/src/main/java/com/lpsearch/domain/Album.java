@@ -1,6 +1,5 @@
-package main.java.com.lpsearch.domain;
+package com.lpsearch.domain;
 
-import com.lpsearch.domain.AlbumStock;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
