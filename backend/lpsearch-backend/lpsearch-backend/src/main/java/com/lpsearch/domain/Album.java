@@ -13,7 +13,7 @@ public class Album {
     private Long siteName;
     private String title;
     private String artist;
-    private String coverImageUrl;
+    private String imageUrl;
     private LocalDateTime lastUpdated;
 
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
