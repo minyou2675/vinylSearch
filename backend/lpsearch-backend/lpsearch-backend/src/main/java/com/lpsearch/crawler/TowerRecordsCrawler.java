@@ -1,5 +1,6 @@
 package com.lpsearch.crawler;
 
+import com.lpsearch.domain.Album;
 import com.lpsearch.dto.AlbumDto;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -7,6 +8,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,56 +20,65 @@ public class TowerRecordsCrawler {
 
     public List<AlbumDto> crawl(String keyword) {
         List<AlbumDto> results = new ArrayList<>();
+
         try {
-            // 검색어 공백 처리 및 URL 구성
-            String searchUrl = BASE_URL + keyword.replace(" ", "%20");
+            String searchUrl = BASE_URL + URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+            Document doc = Jsoup.connect(searchUrl).userAgent("Mozilla/5.0").get();
 
-            // HTML 가져오기
-            Document doc = Jsoup.connect(searchUrl)
-                    .userAgent("Mozilla/5.0") // 필요 시 User-Agent 추가
-                    .get();
-
-            // 크롤링할 대상 선택
-            Elements items = doc.select(".item"); // 여기는 실제 클래스명으로 수정 필요
+            Elements items = doc.select(".TOL-item-search-result-PC-result-tile-display-item");
 
             for (Element item : items) {
                 AlbumDto dto = new AlbumDto();
 
                 // 제목
-                dto.setTitle(item.select(".title").text());
+                String title = item.selectFirst(".TOL-item-search-result-PC-result-display-contents-title a") != null
+                        ? item.selectFirst(".TOL-item-search-result-PC-result-display-contents-title a").text()
+                        : "제목 없음";
 
                 // 아티스트
-                dto.setArtist(item.select(".artist").text());
+                String artist = item.selectFirst(".TOL-item-search-result-PC-result-display-contents-artist-name a") != null
+                        ? item.selectFirst(".TOL-item-search-result-PC-result-display-contents-artist-name a").text()
+                        : "아티스트 없음";
 
                 // 이미지
-                dto.setImageUrl(item.select("img").attr("abs:src"));
+                String imageUrl = item.selectFirst(".TOL-item-search-result-PC-result-tile-display-img img") != null
+                        ? item.selectFirst(".TOL-item-search-result-PC-result-tile-display-img img").absUrl("src")
+                        : "";
 
                 // 상품 링크
-                String relativeUrl = item.select("a").attr("href");
-                dto.setProductUrl("https://tower.jp" + relativeUrl);
+                String productUrl = item.selectFirst(".TOL-item-search-result-PC-result-tile-display-img a") != null
+                        ? item.selectFirst(".TOL-item-search-result-PC-result-tile-display-img a").attr("href")
+                        : "";
 
-                // 가격
-                String priceText = item.select(".price").text().replaceAll("[^0-9]", "");
-                dto.setPrice(priceText.isEmpty() ? null : Integer.parseInt(priceText));
+                // 가격 (할인가 우선)
+                Element priceElement = item.selectFirst(".tr-item-block-info-price span");
+                String priceText = priceElement != null
+                        ? priceElement.text().replaceAll("[^0-9]", "")
+                        : "";
+                Integer price = priceText.isEmpty() ? null : Integer.parseInt(priceText);
 
-                // 사이트명
+                // 품절 여부 (카트 버튼 존재 여부)
+                boolean soldOut = item.select(".cart-in").isEmpty();
+
+                // 데이터 주입
+                dto.setTitle(title);
+                dto.setArtist(artist);
+                dto.setImageUrl(imageUrl);
+                dto.setProductUrl(productUrl);
+                dto.setPrice(price);
+                dto.setSoldOut(soldOut);
                 dto.setSiteName("Tower Records");
-
-                // 통화
                 dto.setCurrency("JPY");
-
-                // 품절 여부: 텍스트 내 sold out, 在庫なし 등의 키워드 체크
-                String itemText = item.text().toLowerCase();
-                dto.setSoldOut(itemText.contains("sold out") || itemText.contains("在庫なし"));
 
                 results.add(dto);
             }
 
         } catch (Exception e) {
-            System.err.println("❌ TowerRecords 크롤링 실패: " + e.getMessage());
+            System.err.println("❌ 크롤링 실패: " + e.getMessage());
             e.printStackTrace();
         }
 
         return results;
     }
-    }
+
+}
