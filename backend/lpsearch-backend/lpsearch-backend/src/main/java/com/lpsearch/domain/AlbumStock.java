@@ -7,9 +7,10 @@ public class AlbumStock {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "site_id")
-    private Site site;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "site_id")
+//    private Site site;
+    private String siteName;
     private String productUrl;
     private int price;
     private Boolean soldOut;
