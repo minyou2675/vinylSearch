@@ -33,7 +33,9 @@ jobs:
 
     - name: 📦 Build Docker image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest .
+       docker build -t ${{ secrets.DOCKER_USERNAME }}/lpsearch-backend:latest .
+      working-directory:
+       backend/lpsearch-backend/lpsearch-backend
 
     - name: 📤 Push image to DockerHub
       run: |
