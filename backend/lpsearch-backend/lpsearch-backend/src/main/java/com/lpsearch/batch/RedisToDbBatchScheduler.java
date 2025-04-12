@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,7 @@ public class RedisToDbBatchScheduler {
                     }
                 }
             }
+
         }
 
         System.out.println("✅ Redis 데이터 DB 저장 완료");
