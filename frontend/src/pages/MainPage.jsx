@@ -19,54 +19,54 @@ export default function Desktop() {
 
   return (
     <div className="bg-white flex flex-row justify-center w-full min-h-screen">
-      <div className="bg-white w-full max-w-[1440px] h-[1024px] relative">
+      <div className="bg-white w-full max-w-screen-xl h-full relative p-4">
         {/* Navigation Menu */}
-        <nav className="absolute w-[546px] h-[47px] top-12 right-[84px]">
+        <nav className="w-full max-w-md mx-auto mt-8">
           <NavigationMenu className="w-full">
             <NavigationMenuList className="flex justify-between w-full">
-            {navItems.map((item, index) => (
-            <React.Fragment key={item.id}>
-                <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                    <Link
-                    to={item.id === "discover" ? "/discover" : "#"}
-                    className="[font-family:'Roboto-Regular',Helvetica] font-normal text-[#5e5e5e] text-3xl text-center tracking-[0] leading-7 whitespace-nowrap cursor-pointer"
-                    >
-                    {item.label}
-                    </Link>
-                </NavigationMenuLink>
-                </NavigationMenuItem>
-                {index < navItems.length - 1 && (
-                <Separator orientation="vertical" className="h-[47px] w-[3px]" />
-                )}
-            </React.Fragment>
-))}
+              {navItems.map((item, index) => (
+                <React.Fragment key={item.id}>
+                  <NavigationMenuItem>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        to={item.id === "discover" ? "/discover" : "#"}
+                        className="font-normal text-[#5e5e5e] text-xl sm:text-2xl tracking-[0] leading-7 whitespace-nowrap cursor-pointer"
+                      >
+                        {item.label}
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                  {index < navItems.length - 1 && (
+                    <Separator orientation="vertical" className="h-[47px] w-[2px]" />
+                  )}
+                </React.Fragment>
+              ))}
             </NavigationMenuList>
           </NavigationMenu>
         </nav>
 
         {/* Decorative Lines */}
-        <div className="absolute w-[1233px] h-[58px] top-[468px] left-[103px]">
-          <Separator className="absolute w-[120px] h-1.5 top-[52px] left-0 bg-black" />
-          <Separator className="absolute w-[1233px] h-1.5 top-5 left-0 bg-black" />
-          <Separator className="absolute w-[302px] h-4 -top-4 left-[931px] bg-black" />
+        <div className="w-full mt-20">
+          <Separator className="w-1/3 h-1.5 bg-black mb-2" />
+          <Separator className="w-full h-1.5 bg-black mb-2" />
+          <Separator className="w-3/4 h-1 bg-black" />
         </div>
 
         {/* Main Typography */}
-        <Card className="absolute w-[1293px] h-[324px] top-[610px] left-[53px] border-none shadow-none">
-          <CardContent className="relative w-[1291px] h-[324px] -top-px p-0">
-            <div className="absolute w-[165px] top-0 left-0 [font-family:'Inter-Bold',Helvetica] font-bold text-black text-[240px] tracking-[0] leading-[normal]">
-              e
+        <Card className="w-full mt-16 border-none shadow-none">
+          <CardContent className="relative w-full p-0 flex flex-col items-center">
+            <div className="relative flex flex-row items-end justify-center">
+              <div className="text-[80px] sm:text-[160px] lg:text-[240px] font-bold text-black mr-2">e</div>
+              <div className="text-[120px] sm:text-[200px] lg:text-[300px] font-bold text-transparent whitespace-nowrap">
+                <span className="text-[#065570]">LP</span>
+                <span className="text-black">fənt</span>
+              </div>
+              <img
+                className="absolute -top-12 right-0 w-[180px] sm:w-[220px] md:w-[260px] lg:w-[280px] object-contain"
+                alt="LP logo"
+                src="/assets/나만의 LP 취향 발견하기 엘피펀트.png"
+              />
             </div>
-            <div className="absolute w-[967px] top-[26px] left-[134px] [font-family:'Inter-Bold',Helvetica] font-bold text-transparent text-[300px] tracking-[0] leading-[normal] whitespace-nowrap">
-              <span className="text-[#065570]">LP</span>
-              <span className="text-black">fənt</span>
-            </div>
-            <img
-              className="absolute w-[458px] h-[95px] top-1.5 left-[833px]"
-              alt="LP logo"
-              src="../src/assets/나만의 LP 취향 발견하기 엘피펀트.png"
-            />
           </CardContent>
         </Card>
       </div>

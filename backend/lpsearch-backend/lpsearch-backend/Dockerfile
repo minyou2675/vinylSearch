@@ -12,7 +12,7 @@ RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
 
 # 빌드된 jar 복사
-RUN cp build/libs/*.jar app.jar
+RUN cp build/libs/*-SNAPSHOT.jar app.jar
 
 # 실행
 CMD ["java", "-jar", "app.jar"]
