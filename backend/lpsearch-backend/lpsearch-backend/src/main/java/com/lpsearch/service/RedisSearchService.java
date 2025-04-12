@@ -21,11 +21,13 @@ public class RedisSearchService {
     public void saveSearchResult(String keyword, List<AlbumDto> result){
         String key = makeKey(keyword);
         redisTemplate.opsForValue().set(key, result, CACHE_TTL);
+        System.out.println("Active saveSearchResult :"+keyword+" "+result);
     }
     public List<AlbumDto> getSearchResult(String keyword){
         String key = makeKey(keyword);
         Object value = redisTemplate.opsForValue().get(key);
         if(value != null && value instanceof List<?>){
+            System.out.println("Active getSearchResult :"+keyword+" "+value);
             return (List<AlbumDto>) value;
         }
         return null;
