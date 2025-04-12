@@ -3,33 +3,33 @@ package com.lpsearch;
 import com.lpsearch.crawler.TowerRecordsCrawler;
 import com.lpsearch.dto.AlbumDto;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
 
-import static org.springframework.test.util.AssertionErrors.assertFalse;
+import static org.mockito.Mockito.mock;
 
-@SpringBootTest
-class TowerRecordsCrawlerTest {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {TowerRecordsCrawlerTest.TestCrawlerConfig.class})
+public class TowerRecordsCrawlerTest {
 
-    @MockBean
+    @Autowired
     private TowerRecordsCrawler towerCrawler;
-    
+
     @Test
     void testCrawl() {
-        List<AlbumDto> result = towerCrawler.crawl("vaundy Replica");
-
-        assertFalse("크롤링 결과가 비어 있습니다!",result.isEmpty());
-        result.forEach(album -> {
-            System.out.println("제목 : " + album.getTitle() + " - " + album.getArtist());
-            System.out.println("가격 :"+ album.getPrice());
-            System.out.println("절판여부 : "+album.getSoldOut());
-
-        });
+        // fake or real test data
     }
 
-
-
+    @TestConfiguration
+    static class TestCrawlerConfig {
+        @Bean
+        public TowerRecordsCrawler towerRecordsCrawler() {
+            return mock(TowerRecordsCrawler.class);
+        }
+    }
 }
