@@ -12,4 +12,5 @@ public class AlbumDto {
     private Integer price;        // 가격 (단위: 엔 or 원)
     private Boolean soldOut;      // 절판 여부 (true = 품절)
     private String currency;      // 통화 (ex. JPY, KRW 등)
+    private String releaseDate;   // 발매일
 }

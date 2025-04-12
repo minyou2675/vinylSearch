@@ -18,6 +18,7 @@ public class Album {
     private String title;
     private String artist;
     private String coverImageUrl;
+    private String releaseDate;
     private LocalDateTime lastUpdated;
 
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)

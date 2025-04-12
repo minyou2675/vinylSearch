@@ -1,12 +1,12 @@
 version: "3.8"
 
 services:
-  app:
+  backend:
     build:
       context: ./backend/lpsearch-backend/lpsearch-backend
       dockerfile: Dockerfile
     image: lpsearch-backend:latest
-    container_name: lpsearch-app
+    container_name: lpsearch-backend
     ports:
       - "8080:8080"
     environment:
@@ -22,9 +22,13 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     container_name: lpsearch-frontend
     ports:
       - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
   redis:
     image: redis:7-alpine
     container_name: lpsearch-redis

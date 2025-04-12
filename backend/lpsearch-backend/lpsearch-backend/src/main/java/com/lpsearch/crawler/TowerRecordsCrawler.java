@@ -39,7 +39,9 @@ public class TowerRecordsCrawler {
                 String artist = item.selectFirst(".TOL-item-search-result-PC-result-display-contents-artist-name a") != null
                         ? item.selectFirst(".TOL-item-search-result-PC-result-display-contents-artist-name a").text()
                         : "아티스트 없음";
-
+                // 발매일
+                Element releaseElement = item.select("dl.item_detail_list dt:contains(発売日) + dd").first();
+                String releaseDate = releaseElement != null ? releaseElement.text() : "";
                 // 이미지
                 String imageUrl = item.selectFirst(".TOL-item-search-result-PC-result-tile-display-img img") != null
                         ? item.selectFirst(".TOL-item-search-result-PC-result-tile-display-img img").absUrl("src")
@@ -69,6 +71,7 @@ public class TowerRecordsCrawler {
                 dto.setSoldOut(soldOut);
                 dto.setSiteName("Tower Records");
                 dto.setCurrency("JPY");
+                dto.setReleaseDate(releaseDate);
 
                 results.add(dto);
             }

@@ -1,23 +1,26 @@
-import React, { useState } from "react";
+import React, { createContext, useContext, useState } from "react";
+
+// 전역 컨텍스트 생성
+const TabsContext = createContext();
 
 export function Tabs({ children, defaultValue }) {
   const [activeTab, setActiveTab] = useState(defaultValue);
-  const context = { activeTab, setActiveTab };
 
   return (
-    <div className="w-full">
-      {React.Children.map(children, (child) =>
-        React.cloneElement(child, { context })
-      )}
-    </div>
+    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+      <div>{children}</div>
+    </TabsContext.Provider>
   );
 }
 
-export function TabsList({ children, context }) {
+export function TabsList({ children }) {
   return <div className="flex space-x-2 mb-4">{children}</div>;
 }
 
-export function TabsTrigger({ value, children, context }) {
+export function TabsTrigger({ value, children }) {
+  const context = useContext(TabsContext);
+  if (!context) throw new Error("TabsTrigger must be used inside <Tabs>");
+
   const isActive = context.activeTab === value;
 
   return (
@@ -25,11 +28,18 @@ export function TabsTrigger({ value, children, context }) {
       onClick={() => context.setActiveTab(value)}
       className={`px-4 py-2 rounded ${
         isActive
-          ? "bg-primary text-white"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          ? "bg-blue-600 text-white"
+          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
       }`}
     >
       {children}
     </button>
   );
+}
+
+export function TabsContent({ value, children }) {
+  const context = useContext(TabsContext);
+  if (!context) return null;
+
+  return context.activeTab === value ? <div>{children}</div> : null;
 }

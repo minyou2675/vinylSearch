@@ -19,10 +19,10 @@ public class SearchController {
 
     @GetMapping("/search")
     public List<AlbumDto> search(
-        @RequestParam String query,
+        @RequestParam String keyword,
         @RequestParam(defaultValue = "true") boolean excludeSoldOut
     ){
-        return crawlingService.searchAlbums(query, excludeSoldOut);
+        return crawlingService.searchAlbums(keyword, excludeSoldOut);
     }
 
 }

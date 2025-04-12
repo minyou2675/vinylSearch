@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Star as StarIcon } from "lucide-react";
-import React from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 
 // Data for album listings
 const albumData = [
@@ -59,7 +59,30 @@ const navTabs = [
   { id: 3, name: "My Favorite", value: "my-favorite" },
 ];
 
-export default function Desktop() {
+export default function Discover() {
+  const [results, setResults] = useState([]); // ← 검색 결과 담는 상태
+  const [keyword, setKeyword] = useState(""); // ✅ 추가된 부분
+
+  const handleSearch = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/search?keyword=${keyword}`
+      );
+      const data = await res.json();
+      console.log("data ====>"+data);
+      setResults(data);
+    } catch (err) {
+      console.error("검색 실패:", err);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      console.log("keyword =====>"+ keyword);
+      handleSearch();
+    }
+  };
+
   return (
     <main className="bg-white flex flex-row justify-center w-full min-h-screen">
       <div className="bg-white w-full max-w-[1440px] relative">
@@ -82,6 +105,8 @@ export default function Desktop() {
               <Input
                 className="h-16 pl-16 bg-transparent border-none text-[#848484] text-[23px] placeholder:text-[#848484]"
                 placeholder="아티스트 명 혹은 LP음반 명 입력하기"
+                onChange={(e) => setKeyword(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
             </div>
           </div>
@@ -142,11 +167,19 @@ export default function Desktop() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {albumData.map((album, index) => (
+                  {results.map((album, index) => (
                     <React.Fragment key={album.id}>
-                      <TableRow className="h-[190px] hover:bg-transparent">
-                        <TableCell className="w-[190px] p-0">
-                          <div className="w-[190px] h-[190px] bg-[#d9d9d9]" />
+                      <TableRow className="h-[250px] hover:bg-transparent">
+                        <TableCell className="w-[250px] p-0">
+                          {album.imageUrl ? (
+                            <img
+                              src={album.imageUrl}
+                              alt={`${album.title} cover`}
+                              className="w-[250px] h-[250px] object-cover"
+                            />
+                          ) : (
+                            <div className="w-[190px] h-[190px] bg-[#d9d9d9]" />
+                          )}
                         </TableCell>
                         <TableCell className="relative">
                           <div className="absolute top-5 left-2">
@@ -162,12 +195,16 @@ export default function Desktop() {
                             )}
                           </div>
                           <div className="mt-[60px] [font-family:'Inter-Bold',Helvetica] font-bold text-black text-xl">
-                            {album.artist}
+                            {album.artist}+{album.title}
                           </div>
                           <div
-                            className={`mt-5 [font-family:'Inter-Bold',Helvetica] font-bold text-xl ${album.inStock ? "text-[#3e7eff]" : "text-[#d33b59]"}`}
+                            className={`mt-5 [font-family:'Inter-Bold',Helvetica] font-bold text-xl ${
+                              album.soldOut
+                                ? "text-[#3e7eff]"
+                                : "text-[#d33b59]"
+                            }`}
                           >
-                            {album.inStock ? "재고 있음" : "절판"}
+                            {album.soldOut ? "절판" : "재고 있음"}
                           </div>
                         </TableCell>
                         <TableCell className="text-center">
@@ -183,7 +220,7 @@ export default function Desktop() {
                             판매가
                           </div>
                           <div className="opacity-50 [font-family:'Inter-Regular',Helvetica] text-black text-xl">
-                            {album.salePrice}
+                            {album.price}
                           </div>
                         </TableCell>
                         <TableCell className="text-center">
@@ -191,11 +228,11 @@ export default function Desktop() {
                             발매가
                           </div>
                           <div className="opacity-50 [font-family:'Inter-Regular',Helvetica] text-black text-xl">
-                            {album.releasePrice}
+                            {album.price}
                           </div>
                         </TableCell>
                       </TableRow>
-                      {index < albumData.length - 1 && (
+                      {index < results.length - 1 && (
                         <TableRow>
                           <TableCell colSpan={5} className="p-0">
                             <Separator className="w-full h-px bg-black opacity-10" />
