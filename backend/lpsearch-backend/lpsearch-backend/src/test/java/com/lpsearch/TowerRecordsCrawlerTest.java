@@ -5,6 +5,7 @@ import com.lpsearch.dto.AlbumDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import static org.springframework.test.util.AssertionErrors.assertFalse;
 @SpringBootTest
 class TowerRecordsCrawlerTest {
 
-    @Autowired
+    @MockBean
     private TowerRecordsCrawler towerCrawler;
     
     @Test

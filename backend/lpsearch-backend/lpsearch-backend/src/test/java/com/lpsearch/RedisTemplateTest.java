@@ -5,6 +5,7 @@ import com.lpsearch.dto.AlbumDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration;
@@ -13,10 +14,10 @@ import java.util.List;
 @SpringBootTest
 public class RedisTemplateTest {
 
-    @Autowired
+    @MockBean
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Autowired
+    @MockBean
     private TowerRecordsCrawler towerRecordsCrawler;
 
     public void saveToRedis(List<AlbumDto> albumList, String keyword){
