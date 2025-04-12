@@ -19,7 +19,12 @@ services:
       - redis
       - mysql
     restart: always
-
+  frontend:
+    build:
+      context: ./frontend
+    container_name: lpsearch-frontend
+    ports:
+      - "3000:80"
   redis:
     image: redis:7-alpine
     container_name: lpsearch-redis
