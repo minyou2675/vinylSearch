@@ -24,21 +24,23 @@ export default function Desktop() {
         <nav className="absolute w-[546px] h-[47px] top-12 right-[84px]">
           <NavigationMenu className="w-full">
             <NavigationMenuList className="flex justify-between w-full">
-              {navItems.map((item, index) => (
-                <React.Fragment key={item.id}>
-                  <NavigationMenuItem>
-                    <NavigationMenuLink className="[font-family:'Roboto-Regular',Helvetica] font-normal text-[#5e5e5e] text-3xl text-center tracking-[0] leading-7 whitespace-nowrap cursor-pointer">
-                      {item.label}
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                  {index < navItems.length - 1 && (
-                    <Separator
-                      orientation="vertical"
-                      className="h-[47px] w-[3px]"
-                    />
-                  )}
-                </React.Fragment>
-              ))}
+            {navItems.map((item, index) => (
+            <React.Fragment key={item.id}>
+                <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                    <Link
+                    to={item.id === "discover" ? "/discover" : "#"}
+                    className="[font-family:'Roboto-Regular',Helvetica] font-normal text-[#5e5e5e] text-3xl text-center tracking-[0] leading-7 whitespace-nowrap cursor-pointer"
+                    >
+                    {item.label}
+                    </Link>
+                </NavigationMenuLink>
+                </NavigationMenuItem>
+                {index < navItems.length - 1 && (
+                <Separator orientation="vertical" className="h-[47px] w-[3px]" />
+                )}
+            </React.Fragment>
+))}
             </NavigationMenuList>
           </NavigationMenu>
         </nav>
