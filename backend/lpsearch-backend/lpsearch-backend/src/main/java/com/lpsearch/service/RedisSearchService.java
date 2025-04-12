@@ -1,5 +1,7 @@
 package com.lpsearch.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lpsearch.domain.Album;
 import com.lpsearch.dto.AlbumDto;
 import jakarta.servlet.http.PushBuilder;
@@ -15,6 +17,8 @@ import java.util.List;
 public class RedisSearchService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
+
 
     private final Duration CACHE_TTL = Duration.ofMinutes(30); //캐시 유효시간
 
@@ -28,7 +32,7 @@ public class RedisSearchService {
         Object value = redisTemplate.opsForValue().get(key);
         if(value != null && value instanceof List<?>){
             System.out.println("Active getSearchResult :"+keyword+" "+value);
-            return (List<AlbumDto>) value;
+            return objectMapper.convertValue(value, new TypeReference<List<AlbumDto>>() {});
         }
         return null;
     }

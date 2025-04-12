@@ -169,8 +169,12 @@ export default function Discover() {
                 <TableBody>
                   {results.map((album, index) => (
                     <React.Fragment key={album.id}>
-                      <TableRow className="h-[250px] hover:bg-transparent">
-                        <TableCell className="w-[250px] p-0">
+                     <TableRow
+                        className="h-[190px] hover:bg-gray-100 cursor-pointer"
+                            >
+                        <TableCell className="w-[250px] p-0"
+                         onClick={() => window.open(album.productUrl, "_blank")} // 새 창으로 이동
+                         >
                           {album.imageUrl ? (
                             <img
                               src={album.imageUrl}
@@ -220,7 +224,7 @@ export default function Discover() {
                             판매가
                           </div>
                           <div className="opacity-50 [font-family:'Inter-Regular',Helvetica] text-black text-xl">
-                            {album.price}
+                            {album.price}{album.currency}
                           </div>
                         </TableCell>
                         <TableCell className="text-center">

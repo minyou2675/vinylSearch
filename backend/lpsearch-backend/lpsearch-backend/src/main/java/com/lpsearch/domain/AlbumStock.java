@@ -12,6 +12,8 @@ public class AlbumStock {
     private String productUrl;
     private int price;
     private Boolean soldOut;
+    private String currency;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id")
