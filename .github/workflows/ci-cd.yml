@@ -7,7 +7,11 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+                - 6379:6379
     env:
       IMAGE_NAME: lpsearch-backend
 
@@ -20,7 +24,11 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-
+        
+    - name: 🛠 Fix permission
+      run: chmod +x gradlew
+      working-directory: backend/lpsearch-backend/lpsearch-backend
+  
     - name: 🛠 Build Spring Boot with Gradle
       run: ./gradlew build
       working-directory: backend/lpsearch-backend/lpsearch-backend
