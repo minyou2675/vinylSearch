@@ -1,22 +1,44 @@
+version: "3.8"
 
 services:
   app:
     build:
-      context: ./backend/lpsearch-backend
+      context: ./backend/lpsearch-backend/lpsearch-backend
       dockerfile: Dockerfile
-    image: lpsearch-backend:latest  
-    container_name: lpsearch-backend
+    image: lpsearch-backend:latest
+    container_name: lpsearch-app
     ports:
       - "8080:8080"
-    depends_on:
-      - redis
     environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/lpsearch?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=1234
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
+    depends_on:
+      - redis
+      - mysql
+    restart: always
 
   redis:
     image: redis:7-alpine
     container_name: lpsearch-redis
     ports:
       - "6379:6379"
+    restart: always
 
+  mysql:
+    image: mysql:8
+    container_name: lpsearch-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: lpsearch
+      TZ: Asia/Seoul
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: always
+
+volumes:
+  mysql-data:
