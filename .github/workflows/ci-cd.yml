@@ -23,6 +23,7 @@ jobs:
 
     - name: 🛠 Build Spring Boot with Gradle
       run: ./gradlew build
+      working-directory: backend/lpsearch-backend
 
     - name: 🐳 Log in to DockerHub
       uses: docker/login-action@v2
