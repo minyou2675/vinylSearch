@@ -20,7 +20,11 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-
+        
+    - name: 🛠 Fix permission
+      run: chmod +x gradlew
+      working-directory: backend/lpsearch-backend/lpsearch-backend
+  
     - name: 🛠 Build Spring Boot with Gradle
       run: ./gradlew build
       working-directory: backend/lpsearch-backend/lpsearch-backend
