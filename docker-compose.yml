@@ -1,10 +1,10 @@
-version: '3.8'
 
 services:
   app:
     build:
-      context: .
+      context: ./backend/lpsearch-backend
       dockerfile: Dockerfile
+    image: lpsearch-backend:latest  
     container_name: lpsearch-backend
     ports:
       - "8080:8080"
@@ -19,3 +19,4 @@ services:
     container_name: lpsearch-redis
     ports:
       - "6379:6379"
+
