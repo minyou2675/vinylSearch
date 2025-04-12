@@ -1,8 +1,10 @@
 package com.lpsearch.domain;
 
 import jakarta.persistence.*;
+import lombok.Setter;
 
 @Entity
+@Setter
 public class AlbumStock {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
