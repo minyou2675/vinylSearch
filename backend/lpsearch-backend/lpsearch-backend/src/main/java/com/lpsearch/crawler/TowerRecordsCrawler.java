@@ -71,7 +71,7 @@ public class TowerRecordsCrawler {
                 dto.setProductUrl(productUrl);
                 dto.setPrice(price);
                 dto.setSoldOut(soldOut);
-                dto.setSiteName("Tower Records");
+                dto.setSiteName("TowerRecords");
                 dto.setCurrency("JPY");
                 dto.setReleaseDate(releaseDate);
 

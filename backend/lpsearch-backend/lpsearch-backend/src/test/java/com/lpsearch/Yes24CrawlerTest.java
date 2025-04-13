@@ -1,5 +1,6 @@
-package com.lpsearch.crawler;
+package com.lpsearch;
 
+import com.lpsearch.crawler.Yes24Crawler;
 import com.lpsearch.dto.AlbumDto;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;

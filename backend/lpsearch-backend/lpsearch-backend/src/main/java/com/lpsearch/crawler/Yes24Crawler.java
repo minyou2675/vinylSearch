@@ -59,8 +59,8 @@ public class Yes24Crawler {
                 dto.setProductUrl(productUrl);
                 dto.setPrice(price);
                 dto.setSoldOut(false);
-                dto.setSiteName("Tower Records");
-                dto.setCurrency("JPY");
+                dto.setSiteName("Yes24");
+                dto.setCurrency("원");
                 dto.setReleaseDate("");
 
                 results.add(dto);

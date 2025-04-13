@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Star as StarIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 const albumData = [
   {
@@ -35,10 +35,11 @@ const albumData = [
 ];
 
 const storeData = [
-  { id: 1, name: "타워레코드" },
-  { id: 2, name: "서울바이닐" },
-  { id: 3, name: "LP랜드" },
-  { id: 4, name: "YES24" },
+  { id: "all", name: "전체" },
+  { id: "TowerRecords", name: "타워레코드" },
+  // { id: 2, name: "서울바이닐" },
+  { id: "LPLand", name: "LP랜드" },
+  { id: "Yes24", name: "YES24" },
 ];
 
 const navTabs = [
@@ -50,6 +51,11 @@ const navTabs = [
 export default function Discover() {
   const [results, setResults] = useState([]);
   const [keyword, setKeyword] = useState("");
+  const [selectedSite, setSelectedSite] = useState("all");
+  const [indicatorPosition, setIndicatorPosition] = useState(0);
+  const storeRefs = useRef({});
+
+
 
   const handleSearch = async () => {
     try {
@@ -58,7 +64,7 @@ export default function Discover() {
       );
       const data = await res.json();
       setResults(data);
-      console.log(results);
+      console.log(data);
     } catch (err) {
       console.error("검색 실패:", err);
     }
@@ -80,18 +86,31 @@ export default function Discover() {
     );
   };
 
+  const filteredResults = selectedSite === "all" || !selectedSite
+  ? results
+  : results.filter((album) => album.siteName && album.siteName === selectedSite)
+
+  const handleStoreClick = (storeId) => {
+    setSelectedSite(storeId);
+    const node = storeRefs.current[storeId];
+    if (node) {
+      // 👉 예: 10px 정도 왼쪽으로 보정
+      setIndicatorPosition(node.offsetLeft - 250); 
+    }
+  };
+  
   return (
     <main className="bg-white flex w-full min-h-screen">
       {/* Left Logo Section */}
-      <div className="w-[220px] flex items-center justify-center relative">
-        <div className="rotate-[-90deg] origin-center">
-          <h1 className="text-[120px] sm:text-[160px] lg:text-[200px] font-bold">
-          <span className="text-[30px] sm:text-[100px] lg:text-[200px] bottom-[50px] font-bold text-black mr-2">e</span>
-            <span className="text-[#065570]">LP</span>
-            <span className="text-black">fənt</span>
-          </h1>
-        </div>
-      </div>
+      <div className="w-[220px] h-screen fixed left-0 top-0 flex items-center justify-center bg-white z-10">
+  <div className="rotate-[-90deg] origin-center">
+    <h1 className="text-[120px] sm:text-[160px] lg:text-[200px] font-bold">
+      <span className="text-[30px] sm:text-[100px] lg:text-[200px] font-bold text-black mr-2">e</span>
+      <span className="text-[#065570]">LP</span>
+      <span className="text-black">fənt</span>
+    </h1>
+  </div>
+</div>
       
 
       {/* Right Content */}
@@ -113,18 +132,31 @@ export default function Discover() {
         <div className="mb-8">
           <div className="relative h-11 mb-2">
             <div className="h-4 bg-gray-200 rounded-[2px_16px_16px_2px]" />
-            <div className="absolute left-0 top-0 flex space-x-1">
-              <div className="w-1 h-11 bg-gray-300 rounded-sm" />
-              <div className="w-1 h-11 bg-gray-300 rounded-sm" />
-            </div>
+              {/* 움직이는 Indicator */}
+              <div
+                className="absolute top-0 flex space-x-1 transition-all duration-300 ease-in-out"
+                style={{ left: `${indicatorPosition}px` }}
+                >
+                <div className="w-1 h-11 bg-gray-300 rounded-sm" />
+                <div className="w-1 h-11 bg-gray-300 rounded-sm" />
+              </div>
+
           </div>
           <div className="flex justify-between">
-            {storeData.map((store) => (
-              <div key={store.id} className="w-[95px] text-center text-lg">
-                {store.name}
-              </div>
-            ))}
-          </div>
+              {storeData.map((store) => (
+                <div
+                  key={store.id}
+                  ref={(el) => (storeRefs.current[store.id] = el)}
+                  className={`w-[95px] text-center text-lg cursor-pointer ${
+                    selectedSite === store.id ? "font-bold text-black" : "text-[#888]"
+                  }`}
+                  onClick={() => handleStoreClick(store.id)}
+                >
+                  {store.name}
+                </div>
+              ))}
+            </div>
+
         </div>
 
         {/* Tabs */}
@@ -145,39 +177,42 @@ export default function Discover() {
         </div>
 
         {/* Album Listings */}
-        <Card className="w-full border-2 border-black border-opacity-[0.06] rounded-[7px] overflow-hidden">
+        <Card className="w-full max-w-none border-2 border-black border-opacity-[0.06] rounded-[7px] overflow-hidden">
           <CardContent className="p-0">
-            <Table className="w-full">
+            <Table className="w-full table-fixed">
               <TableBody>
-                {results.map((album, index) => (
+                {filteredResults.map((album, index) => (
                   <React.Fragment key={`${album.id}-${index}`}>
-                    <TableRow className="h-[250px] hover:bg-gray-100 cursor-pointer">
+                    <TableRow className="h-[250px] hover:bg-gray-100 cursor-pointer"
+                    >
                       {/* Album Image */}
-                      <TableCell className="w-[350px] p-0">
-                      {album.imageUrl ? (
-                            <img
-                              src={album.imageUrl}
-                              alt={`${album.title} cover`}
-                              className="w-[250px] h-[250px] object-cover"
-                            />
-                          ) : (
-                            <div className="w-[190px] h-[190px] bg-[#d9d9d9]" />
-                          )}
-                      </TableCell>
+                    <TableCell className="w-[400px] p-0">
+                      <img
+                        src={album.imageUrl}
+                        alt={`${album.title} cover`}
+                        className="w-full h-auto max-h-[350px] object-cover rounded-md shadow"
+                      />
+                    </TableCell>
 
                       {/* Artist + Title + Favorite */}
                       <TableCell>
   <div className="flex flex-col items-start mt-4">
     {album.isFavorite ? (
       <StarIcon
-        onClick={() => handleFavoriteToggle(album.id)}
+      onClick={(e) => {
+        e.stopPropagation(); // Row 클릭 방지
+        handleFavoriteToggle(album.id);
+      }}
         className="w-[25px] h-[25px] text-pink-400 mb-2 cursor-pointer"
         fill="currentColor"
         strokeWidth={0}
       />
     ) : (
       <StarIcon
-        onClick={() => handleFavoriteToggle(album.id)}
+      onClick={(e) => {
+        e.stopPropagation(); // Row 클릭 방지
+        handleFavoriteToggle(album.id);
+      }}
         className="w-[25px] h-[25px] text-[#141218] mb-2 cursor-pointer"
       />
     )}
@@ -215,8 +250,19 @@ export default function Discover() {
                       {/* 발매가 */}
                       <TableCell className="text-center">
                         <div className="font-bold text-xl mb-2">발매가</div>
-                        <div className="opacity-50 text-xl">{album.price}</div>
+                        <div className="opacity-50 text-xl">{album.price} {album.currency}</div>
                       </TableCell>
+
+                    <TableCell className="text-center">
+                        <a
+                          href={album.productUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline hover:text-blue-800"
+                        >
+                          바로가기
+                        </a>
+                      </TableCell>  
                     </TableRow>
                     {index < results.length - 1 && (
                       <TableRow>
