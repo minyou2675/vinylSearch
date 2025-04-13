@@ -2,8 +2,11 @@ package com.lpsearch.dto;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class AlbumDto {
+    private UUID id;  // ← UUID로 고유값 생성
     private String title;         // 앨범명
     private String artist;        // 아티스트명
     private String imageUrl;      // 앨범 커버 이미지

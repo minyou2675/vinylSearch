@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 import Desktop from './pages/Mainpage'
 import Discover from './pages/Discover'
+import DiscoverTest from './pages/DiscoverTest'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Desktop />} />
         <Route path="/discover" element={<Discover />} />
+        <Route path="/discover-test" element={<DiscoverTest />} />
       </Routes>
     </BrowserRouter>
   );

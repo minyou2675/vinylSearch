@@ -12,6 +12,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class TowerRecordsCrawler {
@@ -63,6 +64,7 @@ public class TowerRecordsCrawler {
                 boolean soldOut = item.select(".cart-in").isEmpty();
 
                 // 데이터 주입
+                dto.setId(UUID.randomUUID());
                 dto.setTitle(title);
                 dto.setArtist(artist);
                 dto.setImageUrl(imageUrl);

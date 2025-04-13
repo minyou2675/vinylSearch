@@ -47,8 +47,8 @@ const navTabs = [
   { id: 3, name: "My Favorite", value: "my-favorite" },
 ];
 
-export default function Discover() {
-  const [results, setResults] = useState([]);
+export default function DiscoverTest() {
+  const [results, setResults] = useState(albumData);
   const [keyword, setKeyword] = useState("");
 
   const handleSearch = async () => {
@@ -58,7 +58,6 @@ export default function Discover() {
       );
       const data = await res.json();
       setResults(data);
-      console.log(results);
     } catch (err) {
       console.error("검색 실패:", err);
     }
@@ -150,7 +149,7 @@ export default function Discover() {
             <Table className="w-full">
               <TableBody>
                 {results.map((album, index) => (
-                  <React.Fragment key={`${album.id}-${index}`}>
+                  <React.Fragment key={album.id}>
                     <TableRow className="h-[250px] hover:bg-gray-100 cursor-pointer">
                       {/* Album Image */}
                       <TableCell className="w-[350px] p-0">
@@ -191,10 +190,10 @@ export default function Discover() {
                       <TableCell className="text-center">
                         <div
                           className={`font-bold text-xl ${
-                            album.soldOut ? "text-[#d33b59]" : "text-[#3e7eff]"
+                            album.inStock ? "text-[#d33b59]" : "text-[#3e7eff]"
                           }`}
                         >
-                          {album.soldOut ? "절판" : "재고 있음"}
+                          {album.inStock ? "재고 있음" : "절판"}
                         </div>
                       </TableCell>
 
