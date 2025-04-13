@@ -53,6 +53,8 @@ export default function Discover() {
   const [keyword, setKeyword] = useState("");
   const [selectedSite, setSelectedSite] = useState("all");
   const [indicatorPosition, setIndicatorPosition] = useState(0);
+  const [hideSoldOut, setHideSoldOut] = useState(false);
+
   const storeRefs = useRef({});
 
 
@@ -86,16 +88,20 @@ export default function Discover() {
     );
   };
 
-  const filteredResults = selectedSite === "all" || !selectedSite
-  ? results
-  : results.filter((album) => album.siteName && album.siteName === selectedSite)
+  const filteredResults = results.filter((album) => {
+    const matchSite =
+      selectedSite === "all" || !selectedSite || album.siteName === selectedSite;
+    const notSoldOut = !hideSoldOut || !album.soldOut;
+    return matchSite && notSoldOut;
+  });
+  
 
   const handleStoreClick = (storeId) => {
     setSelectedSite(storeId);
     const node = storeRefs.current[storeId];
     if (node) {
       // 👉 예: 10px 정도 왼쪽으로 보정
-      setIndicatorPosition(node.offsetLeft - 250); 
+      setIndicatorPosition(node.offsetLeft - 200); 
     }
   };
   
@@ -175,6 +181,20 @@ export default function Discover() {
             </TabsList>
           </Tabs>
         </div>
+
+              <div className="flex items-center mb-4">
+        <input
+          id="hideSoldOut"
+          type="checkbox"
+          className="mr-2"
+          checked={hideSoldOut}
+          onChange={(e) => setHideSoldOut(e.target.checked)}
+        />
+        <label htmlFor="hideSoldOut" className="text-sm text-gray-700">
+          절판 음반 숨기기
+        </label>
+      </div>
+
 
         {/* Album Listings */}
         <Card className="w-full max-w-none border-2 border-black border-opacity-[0.06] rounded-[7px] overflow-hidden">

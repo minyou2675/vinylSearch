@@ -43,6 +43,11 @@ public class Yes24Crawler {
                 String priceText = item.selectFirst(".info_price .yes_b") != null
                         ? item.selectFirst(".info_price .yes_b").text().replace(",", "")
                         : "0";
+                Element btnRow = item.selectFirst("span.btn_row");
+                boolean soldOut = true;
+                if (btnRow != null && btnRow.className().contains("soldOut")) {
+                    soldOut = false;
+                }
 
                 int price = Integer.parseInt(priceText); // 이제 오류 없음
                 String imageUrl = item.selectFirst(".img_item img") != null
@@ -58,7 +63,7 @@ public class Yes24Crawler {
                 dto.setImageUrl(imageUrl);
                 dto.setProductUrl(productUrl);
                 dto.setPrice(price);
-                dto.setSoldOut(false);
+                dto.setSoldOut(soldOut);
                 dto.setSiteName("Yes24");
                 dto.setCurrency("원");
                 dto.setReleaseDate("");

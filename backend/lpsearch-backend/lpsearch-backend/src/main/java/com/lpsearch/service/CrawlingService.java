@@ -43,7 +43,7 @@ public class CrawlingService {
 
         System.out.println("크롤링 후 redis에 저장 완료");
 
-        return filter(result, excludeSoldOut);
+        return result;
     }
 
     private List<AlbumDto> filter(List<AlbumDto> list, boolean excludeSoldOut){
