@@ -92,5 +92,5 @@
 ## 개발자
 
 - 김유민 (Yumin Kim)
-- GitHub: [github.com/kymyy](https://github.com/kymyy)
+- GitHub: [github.com/minyou2675](https://github.com/minyou2675)
 - 기술 스택: Java, Spring Boot, React, Docker, MySQL, Redis
