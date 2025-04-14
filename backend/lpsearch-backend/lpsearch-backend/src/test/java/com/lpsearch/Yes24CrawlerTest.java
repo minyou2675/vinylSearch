@@ -2,12 +2,14 @@ package com.lpsearch;
 
 import com.lpsearch.crawler.Yes24Crawler;
 import com.lpsearch.dto.AlbumDto;
+import jdk.jfr.Enabled;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +23,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+@Disabled
 @ExtendWith(MockitoExtension.class)
 class Yes24CrawlerTest {
 

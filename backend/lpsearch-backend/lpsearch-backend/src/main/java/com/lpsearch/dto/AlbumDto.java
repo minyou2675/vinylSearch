@@ -1,5 +1,8 @@
 package com.lpsearch.dto;
 
+import com.lpsearch.domain.Album;
+import com.lpsearch.domain.AlbumStock;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
@@ -16,4 +19,6 @@ public class AlbumDto {
     private Boolean soldOut;      // 절판 여부 (true = 품절)
     private String currency;      // 통화 (ex. JPY, KRW 등)
     private String releaseDate;   // 발매일
+
+
 }

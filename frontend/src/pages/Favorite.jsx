@@ -101,7 +101,7 @@ export default function Discover() {
     const node = storeRefs.current[storeId];
     if (node) {
       // 👉 예: 10px 정도 왼쪽으로 보정
-      setIndicatorPosition(node.offsetLeft - 150); 
+      setIndicatorPosition(node.offsetLeft - 200); 
     }
   };
   
