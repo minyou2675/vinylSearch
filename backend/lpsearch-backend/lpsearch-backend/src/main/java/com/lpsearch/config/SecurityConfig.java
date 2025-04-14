@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,31 +24,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .authorizeHttpRequests((authz) -> authz
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin().disable()
-                .logout().logoutUrl("/api/auth/logout").logoutSuccessHandler((req, res, auth) -> res.setStatus(200))
-                .and()
-                .sessionManagement().maximumSessions(1);
+                .userDetailsService(authService)
+                .formLogin(login -> login.disable());
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authManager(HttpSecurity http, PasswordEncoder encoder) throws Exception {
-        return http
-                .getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(authService)
-                .passwordEncoder(encoder)
-                .and()
-                .build();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(authService);
+        provider.setPasswordEncoder(passwordEncoder());
+
+        return new ProviderManager(provider);
     }
 }

@@ -23,7 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -60,5 +60,17 @@ public class AuthService {
     public void logout(HttpServletRequest request) {
         request.getSession().invalidate();
     }
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
+
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .authorities(List.of(new SimpleGrantedAuthority("USER"))) // 권한 예시
+                .build();
+    }
+
 }
 
