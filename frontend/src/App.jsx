@@ -6,6 +6,8 @@ import './App.css'
 import Desktop from './pages/Mainpage'
 import Discover from './pages/Discover'
 import DiscoverTest from './pages/DiscoverTest'
+import Signup from './pages/SignupForm'
+import Login from './pages/LoginForm'
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         <Route path="/" element={<Desktop />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/discover-test" element={<DiscoverTest />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
