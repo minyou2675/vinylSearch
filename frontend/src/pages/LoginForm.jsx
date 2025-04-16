@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 export default function LoginForm() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ username: "", password: ""});
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
@@ -9,7 +9,7 @@ export default function LoginForm() {
   };
 
   const handleLogin = async () => {
-    const res = await fetch("http://lpsearch-backend:8080/api/auth/login", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include", // 세션 쿠키 포함
@@ -34,7 +34,8 @@ export default function LoginForm() {
         name="password"
         type="password"
         placeholder="비밀번호"
-        value={form.password} 
+        value={form.password}
+        onChange={handleChange}
         className="border p-2 w-full mb-4"
       />
       <button onClick={handleLogin} className="bg-green-500 text-white px-4 py-2 rounded">
