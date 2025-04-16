@@ -9,7 +9,7 @@ export default function SignupForm() {
   };
 
   const handleSubmit = async () => {
-    const res = await fetch("/api/auth/signup", {
+    const res = await fetch("http://lpsearch-backend:8080/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),

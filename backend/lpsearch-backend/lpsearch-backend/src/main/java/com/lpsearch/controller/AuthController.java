@@ -21,12 +21,14 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequestDto dto) {
+        System.out.println("SignupRequestDTO 받은 값: " + dto); // 로그 찍어보기
         authService.signup(dto);
         return ResponseEntity.ok("회원가입 성공");
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto dto, HttpServletRequest request) {
+        System.out.println("LoginRequestDTO 받은 값: " + dto); // 로그 찍어보기
         authService.login(dto, request);
         return ResponseEntity.ok("로그인 성공");
     }
