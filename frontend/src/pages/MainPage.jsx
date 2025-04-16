@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Separator } from "@/components/ui/separator";
 import React from "react";
+import AuthMenu from "@/components/AuthMenu";
 
 export default function Desktop() {
   // Navigation menu items
@@ -20,6 +21,7 @@ export default function Desktop() {
   return (
     <div className="bg-white flex flex-row justify-center w-full min-h-screen">
       <div className="bg-white w-full max-w-screen-xl h-full relative p-4">
+        <AuthMenu />
         {/* Navigation Menu */}
         <nav className="w-full max-w-md mx-auto mt-8">
           <NavigationMenu className="w-full">

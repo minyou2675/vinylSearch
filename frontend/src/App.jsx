@@ -8,6 +8,7 @@ import Discover from './pages/Discover'
 import DiscoverTest from './pages/DiscoverTest'
 import Signup from './pages/SignupForm'
 import Login from './pages/LoginForm'
+import MyPage from './pages/MyPage'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/discover-test" element={<DiscoverTest />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </BrowserRouter>
   );
