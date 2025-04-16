@@ -1,23 +1,35 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupForm() {
   const [form, setForm] = useState({ username: "", password: "", email: "" });
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(form),
-    });
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(form),
+      });
 
-    const text = await res.text();
-    setMessage(text);
+      const text = await res.text();
+      setMessage(text);
+      
+      if (res.ok) {
+        // 회원가입 성공 시 MainPage로 이동
+        navigate("/", { replace: true });
+      }
+    } catch (err) {
+      console.error("회원가입 실패:", err);
+      setMessage("회원가입 실패");
+    }
   };
 
   return (
