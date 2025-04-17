@@ -39,7 +39,10 @@ export default function Desktop() {
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                   {index < navItems.length - 1 && (
-                    <Separator orientation="vertical" className="h-[47px] w-[2px]" />
+                    <Separator
+                      orientation="vertical"
+                      className="h-[47px] w-[2px]"
+                    />
                   )}
                 </React.Fragment>
               ))}
@@ -58,7 +61,9 @@ export default function Desktop() {
         <Card className="w-full mt-16 border-none shadow-none">
           <CardContent className="relative w-full p-0 flex flex-col items-center">
             <div className="relative flex flex-row items-end justify-center">
-              <div className="text-[80px] sm:text-[160px] lg:text-[240px] font-bold text-black mr-2">e</div>
+              <div className="text-[80px] sm:text-[160px] lg:text-[240px] font-bold text-black mr-2">
+                e
+              </div>
               <div className="text-[120px] sm:text-[200px] lg:text-[300px] font-bold text-transparent whitespace-nowrap">
                 <span className="text-[#065570]">LP</span>
                 <span className="text-black">fənt</span>

@@ -4,6 +4,9 @@ import com.lpsearch.crawler.TowerRecordsCrawler;
 import com.lpsearch.crawler.Yes24Crawler;
 import com.lpsearch.dto.AlbumDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.swing.*;
@@ -21,12 +24,15 @@ public class CrawlingService {
 
     //병렬 처리를 위한 스레드 풀 지정
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
-    public List<AlbumDto> searchAlbums(String keyword, boolean excludeSoldOut){
+
+    public Page<AlbumDto> searchAlbums(String keyword, boolean excludeSoldOut, Pageable pageable) {
         List<AlbumDto> cached = redisSearchService.getSearchResult(keyword);
-        if(cached != null && !cached.isEmpty()){
+        if (cached != null && !cached.isEmpty()) {
             System.out.println("Redis에서 검색 결과를 가져옴");
-            return filter(cached, excludeSoldOut);
+            List<AlbumDto> filtered = filter(cached, excludeSoldOut);
+            return createPage(filtered, pageable);
         }
+
         // Redis에 없으면 병렬로 크롤링 수행
         CompletableFuture<List<AlbumDto>> towerFuture =
                 CompletableFuture.supplyAsync(() -> towerRecordsCrawler.crawl(keyword), executor);
@@ -43,13 +49,21 @@ public class CrawlingService {
 
         System.out.println("크롤링 후 redis에 저장 완료");
 
-        return result;
+        List<AlbumDto> filtered = filter(result, excludeSoldOut);
+        return createPage(filtered, pageable);
     }
 
-    private List<AlbumDto> filter(List<AlbumDto> list, boolean excludeSoldOut){
-        if (excludeSoldOut){
+    private List<AlbumDto> filter(List<AlbumDto> list, boolean excludeSoldOut) {
+        if (excludeSoldOut) {
             return list.stream().filter(album -> !album.getSoldOut()).toList();
         }
         return list;
+    }
+
+    private Page<AlbumDto> createPage(List<AlbumDto> list, Pageable pageable) {
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), list.size());
+        List<AlbumDto> pageContent = list.subList(start, end);
+        return new PageImpl<>(pageContent, pageable, list.size());
     }
 }
