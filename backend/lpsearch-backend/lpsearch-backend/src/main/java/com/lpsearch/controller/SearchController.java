@@ -23,12 +23,11 @@ public class SearchController {
     @GetMapping("/search")
     public Page<AlbumDto> search(
         @RequestParam String keyword,
-        @RequestParam(defaultValue = "true") boolean excludeSoldOut,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return crawlingService.searchAlbums(keyword, excludeSoldOut, pageable);
+        return crawlingService.searchAlbums(keyword, pageable);
     }
 
 }
