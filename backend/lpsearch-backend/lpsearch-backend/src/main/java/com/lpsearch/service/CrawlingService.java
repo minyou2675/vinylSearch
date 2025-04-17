@@ -25,12 +25,11 @@ public class CrawlingService {
     //병렬 처리를 위한 스레드 풀 지정
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
-    public Page<AlbumDto> searchAlbums(String keyword, boolean excludeSoldOut, Pageable pageable) {
+    public Page<AlbumDto> searchAlbums(String keyword, Pageable pageable) {
         List<AlbumDto> cached = redisSearchService.getSearchResult(keyword);
         if (cached != null && !cached.isEmpty()) {
             System.out.println("Redis에서 검색 결과를 가져옴");
-            List<AlbumDto> filtered = filter(cached, excludeSoldOut);
-            return createPage(filtered, pageable);
+            return createPage(cached, pageable);
         }
 
         // Redis에 없으면 병렬로 크롤링 수행
@@ -49,15 +48,7 @@ public class CrawlingService {
 
         System.out.println("크롤링 후 redis에 저장 완료");
 
-        List<AlbumDto> filtered = filter(result, excludeSoldOut);
-        return createPage(filtered, pageable);
-    }
-
-    private List<AlbumDto> filter(List<AlbumDto> list, boolean excludeSoldOut) {
-        if (excludeSoldOut) {
-            return list.stream().filter(album -> !album.getSoldOut()).toList();
-        }
-        return list;
+        return createPage(result, pageable);
     }
 
     private Page<AlbumDto> createPage(List<AlbumDto> list, Pageable pageable) {

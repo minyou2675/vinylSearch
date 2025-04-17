@@ -51,7 +51,7 @@ export default function Discover() {
   const [indicatorPosition, setIndicatorPosition] = useState(0);
   const [hideSoldOut, setHideSoldOut] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const pageSize = 10;
   const observerTarget = useRef(null);
@@ -103,7 +103,8 @@ export default function Discover() {
       selectedSite === "all" ||
       !selectedSite ||
       album.siteName === selectedSite;
-    return matchSite;
+    const matchSoldOut = !hideSoldOut || !album.soldOut;
+    return matchSite && matchSoldOut;
   });
 
   const handleStoreClick = (storeId) => {
