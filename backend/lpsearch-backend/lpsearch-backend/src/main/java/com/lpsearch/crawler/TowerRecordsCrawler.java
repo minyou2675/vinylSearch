@@ -29,6 +29,12 @@ public class TowerRecordsCrawler {
             Elements items = doc.select(".TOL-item-search-result-PC-result-tile-display-item");
 
             for (Element item : items) {
+                // LP 레코드인지 확인
+                Element categoryElement = item.selectFirst(".TOL-item-search-result-PC-result-display-contents-category span");
+                if (categoryElement == null || !categoryElement.text().contains("LP")) {
+                    continue;
+                }
+
                 AlbumDto dto = new AlbumDto();
 
                 // 제목

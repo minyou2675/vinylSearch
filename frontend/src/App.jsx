@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import './App.css'
-import Desktop from './pages/MainPage'
-import Discover from './pages/Discover'
-import DiscoverTest from './pages/DiscoverTest'
-import Signup from './pages/SignupForm'
-import Login from './pages/LoginForm'
-import MyPage from './pages/MyPage'
+import "./App.css";
+import Desktop from "./pages/MainPage";
+import Discover from "./pages/Discover";
+import DiscoverTest from "./pages/DiscoverTest";
+import Signup from "./pages/SignupForm";
+import Login from "./pages/LoginForm";
+import MyPage from "./pages/MyPage";
 
 function App() {
   return (
