@@ -101,35 +101,9 @@
 
 ## 향후 개선사항
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-~~- 사용자 로그인 및 세션 기반 즐겨찾기 저장~~(업데이트 완료)
-~~- 검색 결과 무한 스크롤 API 및 UI 구현~~(업데이트 완료)
-=======
+
 - 사용자 로그인 및 세션 기반 즐겨찾기 저장
 - 검색 결과 무한 스크롤 API 및 UI 구현
-- 크롤링 주기적 자동화 (스케줄링 + 배치)
->>>>>>> af1bb15 (Update README.md)
-=======
-~~- 사용자 로그인 및 세션 기반 즐겨찾기 저장~~(업데이트 완료)
-~~- 검색 결과 무한 스크롤 API 및 UI 구현~~(업데이트 완료)
->>>>>>> b38115f (Update README.md)
-=======
-~~- 사용자 로그인 및 세션 기반 즐겨찾기 저장~~(업데이트 완료)
-~~- 검색 결과 무한 스크롤 API 및 UI 구현~~(업데이트 완료)
->>>>>>> 8bc851e25a23c9ab0e0c8bb6712af58999b41d04
-=======
-- ~~사용자 로그인 및 세션 기반 즐겨찾기 저장~~(업데이트 완료)
-- ~~검색 결과 무한 스크롤 API 및 UI 구현~~(업데이트 완료)
->>>>>>> 8034d61daf59cd364a5aa9b824d7ab6ff2768ebc
-=======
-- ~~사용자 로그인 및 세션 기반 즐겨찾기 저장~~(업데이트 완료)
-- ~~검색 결과 무한 스크롤 API 및 UI 구현~~(업데이트 완료)
-- 배포 서버 구축
->>>>>>> 700b65adaac3ca1449be1cad57f9cb80e36c33b5
 - 모바일 UI 대응
 - 실시간 검색어
 - 다국어 대응(영어/한국어)
@@ -138,27 +112,11 @@
 
 ## 스크린샷
 ![메인화면](https://github.com/user-attachments/assets/5ab2465f-7c27-4b32-8274-6bc7b648cbcd)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 8bc851e25a23c9ab0e0c8bb6712af58999b41d04
 <p align="center">메인화면</p>
 
 ![크롤링 기반 검색화면](https://github.com/user-attachments/assets/25fbcdb6-882d-4b87-b7b6-aa48ecad7315)
 <p align="center">크롤링검색</p>
-<<<<<<< HEAD
-=======
 
-![크롤링 기반 검색화면](https://github.com/user-attachments/assets/25fbcdb6-882d-4b87-b7b6-aa48ecad7315)
-
-![즐겨찾기 화면](https://github.com/user-attachments/assets/c73476b7-118d-4d87-8296-45311563900a)
-
-![마이페이지 화면](https://github.com/user-attachments/assets/85a8a42d-aadf-443b-9608-d4b7fb28c71d)
->>>>>>> d231c09 (Update README.md)
-
-=======
-
->>>>>>> 8bc851e25a23c9ab0e0c8bb6712af58999b41d04
 ![즐겨찾기 화면](https://github.com/user-attachments/assets/c73476b7-118d-4d87-8296-45311563900a)
 <p align="center">나의 즐겨찾기 화면</p>
 
