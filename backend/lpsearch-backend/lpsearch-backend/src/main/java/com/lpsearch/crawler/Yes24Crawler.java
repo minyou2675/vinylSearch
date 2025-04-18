@@ -49,10 +49,15 @@ public class Yes24Crawler {
                     soldOut = false;
                 }
 
-                int price = Integer.parseInt(priceText); // 이제 오류 없음
+                int price = Integer.parseInt(priceText);
                 String imageUrl = item.selectFirst(".img_item img") != null
-                        ? item.selectFirst(".img_item img").attr("src")
+                        ? item.selectFirst(".img_item img").attr("data-original")
                         : "";
+                if (imageUrl.isEmpty()) {
+                    imageUrl = item.selectFirst(".img_item img") != null
+                            ? item.selectFirst(".img_item img").absUrl("src")
+                            : "";
+                }
                 String productUrl = item.selectFirst(".gd_name") != null
                         ? "https://www.yes24.com" + item.selectFirst(".gd_name").attr("href")
                         : "";
