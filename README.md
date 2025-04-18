@@ -78,6 +78,72 @@
 - 무한 스크롤 로딩
 
 ---
+## 시퀀스 다이어그램
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant API
+    participant Backend
+    participant DB
+    participant Redis
+
+    %% 로그인/회원가입 시퀀스
+    User->>Frontend: 로그인/회원가입 요청
+    Frontend->>API: 인증 API 호출
+    API->>Backend: AuthController
+    Backend->>DB: 사용자 정보 조회/저장
+    DB-->>Backend: 사용자 데이터
+    Backend-->>API: JWT 토큰 발급
+    API-->>Frontend: 인증 결과
+    Frontend->>Frontend: 인증 상태 업데이트
+    Frontend-->>User: 로그인/회원가입 완료
+
+    %% 즐겨찾기 시퀀스
+    User->>Frontend: 즐겨찾기 페이지 접근
+    Frontend->>API: 인증 상태 확인
+    alt 미인증
+        API-->>Frontend: 401 응답
+        Frontend-->>User: 로그인 페이지로 리다이렉트
+    else 인증됨
+        Frontend->>API: 즐겨찾기 목록 요청
+        API->>Backend: FavoriteController
+        Backend->>DB: 즐겨찾기 데이터 조회
+        DB-->>Backend: 즐겨찾기 목록
+        Backend-->>API: JSON 응답
+        API-->>Frontend: 즐겨찾기 목록
+        Frontend-->>User: 즐겨찾기 목록 표시
+    end
+
+    %% 검색 시퀀스
+    User->>Frontend: 검색어 입력
+    Frontend->>API: 검색 요청
+    API->>Backend: SearchController
+    Backend->>Redis: 캐시 확인
+    alt 캐시 히트
+        Redis-->>Backend: 캐시된 데이터
+    else 캐시 미스
+        Backend->>Backend: 병렬 크롤링
+        Backend->>Redis: 결과 캐싱
+    end
+    Backend-->>API: 페이지네이션된 결과
+    API-->>Frontend: JSON 응답
+    Frontend-->>User: 검색 결과 표시
+
+    %% 즐겨찾기 토글 시퀀스
+    User->>Frontend: 즐겨찾기 토글
+    Frontend->>API: 토글 요청
+    API->>Backend: FavoriteController
+    Backend->>DB: 즐겨찾기 상태 업데이트
+    DB-->>Backend: 업데이트 결과
+    Backend-->>API: 성공 응답
+    API-->>Frontend: 토글 결과
+    Frontend->>Frontend: UI 업데이트
+    Frontend-->>User: 즐겨찾기 상태 변경 표시
+
+
+
+---
 
 ## 향후 개선사항
 
