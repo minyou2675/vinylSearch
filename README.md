@@ -97,10 +97,19 @@
 
 ## 스크린샷
 ![메인화면](https://github.com/user-attachments/assets/5ab2465f-7c27-4b32-8274-6bc7b648cbcd)
+<<<<<<< HEAD
 <p align="center">메인화면</p>
 
 ![크롤링 기반 검색화면](https://github.com/user-attachments/assets/25fbcdb6-882d-4b87-b7b6-aa48ecad7315)
 <p align="center">크롤링검색</p>
+=======
+
+![크롤링 기반 검색화면](https://github.com/user-attachments/assets/25fbcdb6-882d-4b87-b7b6-aa48ecad7315)
+
+![즐겨찾기 화면](https://github.com/user-attachments/assets/c73476b7-118d-4d87-8296-45311563900a)
+
+![마이페이지 화면](https://github.com/user-attachments/assets/85a8a42d-aadf-443b-9608-d4b7fb28c71d)
+>>>>>>> d231c09 (Update README.md)
 
 ![즐겨찾기 화면](https://github.com/user-attachments/assets/c73476b7-118d-4d87-8296-45311563900a)
 <p align="center">나의 즐겨찾기 화면</p>
