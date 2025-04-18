@@ -9,6 +9,7 @@ import DiscoverTest from "./pages/DiscoverTest";
 import Signup from "./pages/SignupForm";
 import Login from "./pages/LoginForm";
 import MyPage from "./pages/MyPage";
+import Favorite from "./pages/Favorite";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/mypage" element={<MyPage />} />
+        <Route path="/favorite" element={<Favorite />} />
       </Routes>
     </BrowserRouter>
   );

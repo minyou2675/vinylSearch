@@ -4,8 +4,9 @@ import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Star as StarIcon } from "lucide-react";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import AuthMenu from "@/components/AuthMenu";
+import { useNavigate } from 'react-router-dom';
 
 const albumData = [
   {
@@ -53,19 +54,34 @@ export default function Discover() {
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pageSize = 10;
   const observerTarget = useRef(null);
-
   const storeRefs = useRef({});
+  const navigate = useNavigate();
+
+  // 로그인 상태 확인
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/check`, {
+          credentials: 'include'
+        });
+        setIsLoggedIn(res.ok);
+      } catch (err) {
+        console.error("인증 확인 실패:", err);
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuth();
+  }, []);
 
   const handleSearch = async (page = 0) => {
     if (isLoading) return;
     setIsLoading(true);
     try {
       const res = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/search?keyword=${keyword}&page=${page}&size=${pageSize}&excludeSoldOut=${hideSoldOut}`
+        `${import.meta.env.VITE_API_URL}/api/search?keyword=${keyword}&page=${page}&size=${pageSize}`
       );
       const data = await res.json();
       if (page === 0) {
@@ -82,20 +98,52 @@ export default function Discover() {
     }
   };
 
+  const handleFavoriteToggle = async (album) => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites/toggle`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          title: album.title,
+          artist: album.artist,
+          imageUrl: album.imageUrl,
+          releaseDate: album.releaseDate,
+          productUrl: album.productUrl,
+          siteName: album.siteName,
+          currency: album.currency,
+          price: album.price,
+          soldOut: album.soldOut
+        })
+      });
+
+      if (res.ok) {
+        setResults(prevResults =>
+          prevResults.map(item =>
+            item.id === album.id
+              ? { ...item, isFavorite: !item.isFavorite }
+              : item
+          )
+        );
+      }
+    } catch (err) {
+      console.error("즐겨찾기 토글 실패:", err);
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       setCurrentPage(0);
       setResults([]);
       handleSearch(0);
     }
-  };
-
-  const handleFavoriteToggle = (id) => {
-    setResults((prevResults) =>
-      prevResults.map((album) =>
-        album.id === id ? { ...album, isFavorite: !album.isFavorite } : album
-      )
-    );
   };
 
   const filteredResults = results.filter((album) => {
@@ -111,7 +159,9 @@ export default function Discover() {
     setSelectedSite(storeId);
     const node = storeRefs.current[storeId];
     if (node) {
-      setIndicatorPosition(node.offsetLeft - 150);
+      const indicatorWidth = 2; // indicator의 너비 (2개의 선)
+      const indicatorOffset = (node.offsetWidth - indicatorWidth) / 2; // 중앙 정렬을 위한 오프셋
+      setIndicatorPosition(node.offsetLeft + indicatorOffset);
     }
   };
 
@@ -208,6 +258,15 @@ export default function Discover() {
                     key={tab.id}
                     value={tab.value}
                     className="text-xl text-[#5e5e5e] data-[state=active]:font-bold"
+                    onClick={() => {
+                      if (tab.value === 'my-favorite') {
+                        if (!isLoggedIn) {
+                          navigate('/login');
+                        } else {
+                          navigate('/favorite');
+                        }
+                      }
+                    }}
                   >
                     {tab.name}
                   </TabsTrigger>
@@ -239,37 +298,39 @@ export default function Discover() {
                       <TableRow className="h-[250px] hover:bg-gray-100 cursor-pointer">
                         {/* Album Image */}
                         <TableCell className="w-[400px] p-0">
-                          <img
-                            src={album.imageUrl}
-                            alt={`${album.title} cover`}
-                            className="w-full h-auto max-h-[350px] object-cover rounded-md shadow"
-                          />
+                          <div className="w-full h-[250px] flex items-center justify-center">
+                            <img
+                              src={album.imageUrl}
+                              alt={`${album.title} cover`}
+                              className="w-auto h-full object-contain rounded-md shadow"
+                              onError={(e) => {
+                                e.target.src = 'https://via.placeholder.com/400x400?text=No+Image';
+                              }}
+                            />
+                          </div>
                         </TableCell>
 
                         {/* Artist + Title + Favorite */}
                         <TableCell>
                           <div className="flex flex-col items-start mt-4">
-                            {album.isFavorite ? (
+                            {isLoggedIn && (
                               <StarIcon
                                 onClick={(e) => {
-                                  e.stopPropagation(); // Row 클릭 방지
-                                  handleFavoriteToggle(album.id);
+                                  e.stopPropagation();
+                                  handleFavoriteToggle(album);
                                 }}
-                                className="w-[25px] h-[25px] text-pink-400 mb-2 cursor-pointer"
-                                fill="currentColor"
-                                strokeWidth={0}
-                              />
-                            ) : (
-                              <StarIcon
-                                onClick={(e) => {
-                                  e.stopPropagation(); // Row 클릭 방지
-                                  handleFavoriteToggle(album.id);
-                                }}
-                                className="w-[25px] h-[25px] text-[#141218] mb-2 cursor-pointer"
+                                className={`w-[25px] h-[25px] mb-2 cursor-pointer ${
+                                  album.isFavorite ? "text-pink-400 fill-current" : "text-[#141218]"
+                                }`}
                               />
                             )}
                             <div className="font-bold text-xl text-black">
-                              {album.artist} + {album.title}
+                              <div className="truncate max-w-[200px]" title={album.artist}>
+                                {album.artist}
+                              </div>
+                              <div className="truncate max-w-[200px]" title={album.title}>
+                                {album.title}
+                              </div>
                             </div>
                           </div>
                         </TableCell>
