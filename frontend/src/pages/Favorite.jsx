@@ -52,6 +52,9 @@ export default function Favorite() {
 
   useEffect(() => {
     const fetchFavorites = async () => {
+      const startTime = performance.now();
+      const fetchStartTime = new Date().toISOString();
+
       try {
         const res = await fetch(
           `${import.meta.env.VITE_API_URL}/api/favorites/1`,
@@ -66,9 +69,32 @@ export default function Favorite() {
         }
 
         const data = await res.json();
+        const fetchEndTime = performance.now();
+
+        // 성능 로깅
+        console.log(`[${fetchStartTime}] Favorites Fetch Performance:
+          - Fetch Time: ${(fetchEndTime - startTime).toFixed(2)}ms
+          - Results Count: ${data.length}
+        `);
+
+        // 렌더링 시작 시간 측정
+        const renderStartTime = performance.now();
+
         setFavorites(data);
+
+        // 렌더링 완료 시간 측정
+        const renderEndTime = performance.now();
+        console.log(`[${fetchStartTime}] Favorites Render Performance:
+          - Render Time: ${(renderEndTime - renderStartTime).toFixed(2)}ms
+          - Total Operation Time: ${(renderEndTime - startTime).toFixed(2)}ms
+        `);
       } catch (err) {
         console.error("즐겨찾기 목록 가져오기 실패:", err);
+        const errorTime = performance.now();
+        console.log(`[${fetchStartTime}] Error Performance:
+          - Time until Error: ${(errorTime - startTime).toFixed(2)}ms
+          - Error: ${err.message}
+        `);
       } finally {
         setIsLoading(false);
       }
@@ -78,6 +104,9 @@ export default function Favorite() {
   }, [navigate]);
 
   const handleFavoriteToggle = async (album) => {
+    const startTime = performance.now();
+    const toggleStartTime = new Date().toISOString();
+
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/favorites/toggle`,
@@ -101,13 +130,36 @@ export default function Favorite() {
         }
       );
 
+      const toggleEndTime = performance.now();
+
+      // 성능 로깅
+      console.log(`[${toggleStartTime}] Favorite Toggle Performance:
+        - API Call Time: ${(toggleEndTime - startTime).toFixed(2)}ms
+        - Status: ${res.status}
+      `);
+
       if (res.ok) {
+        // UI 업데이트 시작 시간 측정
+        const updateStartTime = performance.now();
+
         setFavorites((prevFavorites) =>
           prevFavorites.filter((item) => item.id !== album.id)
         );
+
+        // UI 업데이트 완료 시간 측정
+        const updateEndTime = performance.now();
+        console.log(`[${toggleStartTime}] UI Update Performance:
+          - Update Time: ${(updateEndTime - updateStartTime).toFixed(2)}ms
+          - Total Operation Time: ${(updateEndTime - startTime).toFixed(2)}ms
+        `);
       }
     } catch (err) {
       console.error("즐겨찾기 토글 실패:", err);
+      const errorTime = performance.now();
+      console.log(`[${toggleStartTime}] Error Performance:
+        - Time until Error: ${(errorTime - startTime).toFixed(2)}ms
+        - Error: ${err.message}
+      `);
     }
   };
 

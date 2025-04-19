@@ -6,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Star as StarIcon } from "lucide-react";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import AuthMenu from "@/components/AuthMenu";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const albumData = [
   {
@@ -64,9 +64,12 @@ export default function Discover() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/check`, {
-          credentials: 'include'
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/auth/check`,
+          {
+            credentials: "include",
+          }
+        );
         setIsLoggedIn(res.ok);
       } catch (err) {
         console.error("인증 확인 실패:", err);
@@ -79,11 +82,33 @@ export default function Discover() {
   const handleSearch = async (page = 0) => {
     if (isLoading) return;
     setIsLoading(true);
+
+    const startTime = performance.now();
+    const searchStartTime = new Date().toISOString();
+
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/search?keyword=${keyword}&page=${page}&size=${pageSize}`
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/search?keyword=${keyword}&page=${page}&size=${pageSize}&excludeSoldOut=${hideSoldOut}`
       );
       const data = await res.json();
+
+      const endTime = performance.now();
+      const searchTime = endTime - startTime;
+
+      // 성능 로깅
+      console.log(`[${searchStartTime}] Search Performance Metrics:
+        - Total Search Time: ${searchTime.toFixed(2)}ms
+        - Keyword: ${keyword}
+        - Page: ${page}
+        - Results Count: ${data.content.length}
+        - Has More: ${data.content.length === pageSize}
+      `);
+
+      // 렌더링 시작 시간 측정
+      const renderStartTime = performance.now();
+
       if (page === 0) {
         setResults(data.content);
       } else {
@@ -91,8 +116,20 @@ export default function Discover() {
       }
       setHasMore(data.content.length === pageSize);
       setCurrentPage(page);
+
+      // 렌더링 완료 시간 측정
+      const renderEndTime = performance.now();
+      console.log(`[${searchStartTime}] Render Performance:
+        - Render Time: ${(renderEndTime - renderStartTime).toFixed(2)}ms
+        - Total Operation Time: ${(renderEndTime - startTime).toFixed(2)}ms
+      `);
     } catch (err) {
       console.error("검색 실패:", err);
+      const errorTime = performance.now();
+      console.log(`[${searchStartTime}] Error Performance:
+        - Time until Error: ${(errorTime - startTime).toFixed(2)}ms
+        - Error: ${err.message}
+      `);
     } finally {
       setIsLoading(false);
     }
@@ -100,33 +137,36 @@ export default function Discover() {
 
   const handleFavoriteToggle = async (album) => {
     if (!isLoggedIn) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites/toggle`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          title: album.title,
-          artist: album.artist,
-          imageUrl: album.imageUrl,
-          releaseDate: album.releaseDate,
-          productUrl: album.productUrl,
-          siteName: album.siteName,
-          currency: album.currency,
-          price: album.price,
-          soldOut: album.soldOut
-        })
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/favorites/toggle`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            title: album.title,
+            artist: album.artist,
+            imageUrl: album.imageUrl,
+            releaseDate: album.releaseDate,
+            productUrl: album.productUrl,
+            siteName: album.siteName,
+            currency: album.currency,
+            price: album.price,
+            soldOut: album.soldOut,
+          }),
+        }
+      );
 
       if (res.ok) {
-        setResults(prevResults =>
-          prevResults.map(item =>
+        setResults((prevResults) =>
+          prevResults.map((item) =>
             item.id === album.id
               ? { ...item, isFavorite: !item.isFavorite }
               : item
@@ -259,11 +299,11 @@ export default function Discover() {
                     value={tab.value}
                     className="text-xl text-[#5e5e5e] data-[state=active]:font-bold"
                     onClick={() => {
-                      if (tab.value === 'my-favorite') {
+                      if (tab.value === "my-favorite") {
                         if (!isLoggedIn) {
-                          navigate('/login');
+                          navigate("/login");
                         } else {
-                          navigate('/favorite');
+                          navigate("/favorite");
                         }
                       }
                     }}
@@ -304,7 +344,8 @@ export default function Discover() {
                               alt={`${album.title} cover`}
                               className="w-auto h-full object-contain rounded-md shadow"
                               onError={(e) => {
-                                e.target.src = 'https://via.placeholder.com/400x400?text=No+Image';
+                                e.target.src =
+                                  "https://via.placeholder.com/400x400?text=No+Image";
                               }}
                             />
                           </div>
@@ -320,15 +361,23 @@ export default function Discover() {
                                   handleFavoriteToggle(album);
                                 }}
                                 className={`w-[25px] h-[25px] mb-2 cursor-pointer ${
-                                  album.isFavorite ? "text-pink-400 fill-current" : "text-[#141218]"
+                                  album.isFavorite
+                                    ? "text-pink-400 fill-current"
+                                    : "text-[#141218]"
                                 }`}
                               />
                             )}
                             <div className="font-bold text-xl text-black">
-                              <div className="truncate max-w-[200px]" title={album.artist}>
+                              <div
+                                className="truncate max-w-[200px]"
+                                title={album.artist}
+                              >
                                 {album.artist}
                               </div>
-                              <div className="truncate max-w-[200px]" title={album.title}>
+                              <div
+                                className="truncate max-w-[200px]"
+                                title={album.title}
+                              >
                                 {album.title}
                               </div>
                             </div>
