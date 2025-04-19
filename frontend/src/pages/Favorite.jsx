@@ -1,17 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Star as StarIcon } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-import AuthMenu from '@/components/AuthMenu';
+import { useNavigate } from "react-router-dom";
+import AuthMenu from "@/components/AuthMenu";
 
 const albumData = [
   {
@@ -58,12 +53,15 @@ export default function Favorite() {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites/1`, {
-          credentials: 'include'
-        });
-        
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/favorites/1`,
+          {
+            credentials: "include",
+          }
+        );
+
         if (!res.ok) {
-          navigate('/login');
+          navigate("/login");
           return;
         }
 
@@ -81,28 +79,31 @@ export default function Favorite() {
 
   const handleFavoriteToggle = async (album) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites/toggle`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          title: album.title,
-          artist: album.artist,
-          imageUrl: album.imageUrl,
-          releaseDate: album.releaseDate,
-          productUrl: album.productUrl,
-          siteName: album.siteName,
-          currency: album.currency,
-          price: album.price,
-          soldOut: album.soldOut
-        })
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/favorites/toggle`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            title: album.title,
+            artist: album.artist,
+            imageUrl: album.imageUrl,
+            releaseDate: album.releaseDate,
+            productUrl: album.productUrl,
+            siteName: album.siteName,
+            currency: album.currency,
+            price: album.price,
+            soldOut: album.soldOut,
+          }),
+        }
+      );
 
       if (res.ok) {
-        setFavorites(prevFavorites =>
-          prevFavorites.filter(item => item.id !== album.id)
+        setFavorites((prevFavorites) =>
+          prevFavorites.filter((item) => item.id !== album.id)
         );
       }
     } catch (err) {
@@ -163,10 +164,16 @@ export default function Favorite() {
                               fill="currentColor"
                             />
                             <div className="font-bold text-xl text-black">
-                              <div className="truncate max-w-[200px]" title={album.artist}>
+                              <div
+                                className="truncate max-w-[200px]"
+                                title={album.artist}
+                              >
                                 {album.artist}
                               </div>
-                              <div className="truncate max-w-[200px]" title={album.title}>
+                              <div
+                                className="truncate max-w-[200px]"
+                                title={album.title}
+                              >
                                 {album.title}
                               </div>
                             </div>
@@ -176,7 +183,9 @@ export default function Favorite() {
                         <TableCell className="text-center">
                           <div
                             className={`font-bold text-xl ${
-                              album.soldOut ? "text-[#d33b59]" : "text-[#3e7eff]"
+                              album.soldOut
+                                ? "text-[#d33b59]"
+                                : "text-[#3e7eff]"
                             }`}
                           >
                             {album.soldOut ? "절판" : "재고 있음"}
