@@ -4,8 +4,8 @@ services:
   gateway:
     build:
       context: ./backend/api-gateway
-      ports:
-        - "8888:3000"
+    ports:
+      - "8888:8888"
     depends_on:
       - backend
     restart: unless-stopped
