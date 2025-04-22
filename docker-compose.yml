@@ -1,6 +1,14 @@
 version: "3.8"
 
 services:
+  gateway:
+    build:
+      context: ./backend/api-gateway
+      ports:
+        - "8888:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
   backend:
     build:
       context: ./backend/lpsearch-backend/lpsearch-backend
