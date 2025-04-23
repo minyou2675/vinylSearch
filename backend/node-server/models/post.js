@@ -12,6 +12,7 @@ const sequelize = new Sequelize(
     }
 );
 
+
 // 테이블 정의
 const Post = sequelize.define('Post', {
     title: {
@@ -28,16 +29,7 @@ const Post = sequelize.define('Post', {
     },
 });
 
-// 테이블 동기화
-(async () => {
-    try{
-        await sequelize.authenticate();
-        console.log('DB 연결 성공');
-        await sequelize.sync({alter: true}); //테이블 자동 생성
-        console.log('테이블 동기화 완료');
-    } catch (error) {
-        console.error('DB 연결 실패:', error);
-    }
-})();
+  // 👇 이 부분을 테스트에서 제외할 수 있게 export만 하고,
+  // 실제 앱에서만 동기화 실행
+  module.exports = { Post, sequelize };
 
-module.exports = {Post};
