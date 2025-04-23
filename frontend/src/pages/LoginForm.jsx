@@ -65,9 +65,14 @@ export default function LoginForm() {
         onKeyPress={handleKeyPress}
         className="border p-2 w-full mb-4"
       />
-      <button onClick={handleLogin} className="bg-green-500 text-white px-4 py-2 rounded">
-        로그인
-      </button>
+      <div className="flex gap-2">
+        <button onClick={handleLogin} className="bg-green-500 text-white px-4 py-2 rounded">
+          로그인
+        </button>
+        <button onClick={() => navigate('/signup')} className="bg-blue-500 text-white px-4 py-2 rounded">
+          회원가입
+        </button>
+      </div>
 
       {message && <p className="mt-4 text-sm text-red-700">{message}</p>}
     </div>
