@@ -8,6 +8,8 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import AuthMenu from "@/components/AuthMenu";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/components/Logo";
+import { getUserInfoFromToken } from "@/lib/utils";
+
 const albumData = [
   {
     id: 1,
@@ -60,23 +62,11 @@ export default function Discover() {
   const storeRefs = useRef({});
   const navigate = useNavigate();
 
-  // 로그인 상태 확인
+  // JWT 토큰 기반 로그인 상태 확인
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/auth/check`,
-          {
-            credentials: "include",
-          }
-        );
-        setIsLoggedIn(res.ok);
-      } catch (err) {
-        console.error("인증 확인 실패:", err);
-        setIsLoggedIn(false);
-      }
-    };
-    checkAuth();
+    const token = localStorage.getItem("token");
+    const userInfo = getUserInfoFromToken(token);
+    setIsLoggedIn(!!userInfo);
   }, []);
 
   const handleSearch = async (page = 0) => {
@@ -148,8 +138,8 @@ export default function Discover() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          credentials: "include",
           body: JSON.stringify({
             title: album.title,
             artist: album.artist,
@@ -175,6 +165,12 @@ export default function Discover() {
       }
     } catch (err) {
       console.error("즐겨찾기 토글 실패:", err);
+      if (err.response?.status === 401) {
+        // 토큰이 만료된 경우
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        navigate("/login");
+      }
     }
   };
 
@@ -344,19 +340,14 @@ export default function Discover() {
                         {/* Artist + Title + Favorite */}
                         <TableCell>
                           <div className="flex flex-col items-start mt-4">
-                            {isLoggedIn && (
-                              <StarIcon
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleFavoriteToggle(album);
-                                }}
-                                className={`w-[25px] h-[25px] mb-2 cursor-pointer ${
-                                  album.isFavorite
-                                    ? "text-pink-400 fill-current"
-                                    : "text-[#141218]"
-                                }`}
-                              />
-                            )}
+                            <StarIcon
+                              className={`w-6 h-6 cursor-pointer ${
+                                album.isFavorite
+                                  ? "text-yellow-400 fill-yellow-400"
+                                  : "text-gray-400"
+                              }`}
+                              onClick={() => handleFavoriteToggle(album)}
+                            />
                             <div className="font-bold text-xl text-black">
                               <div
                                 className="truncate max-w-[200px]"

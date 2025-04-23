@@ -1,50 +1,53 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getUserInfoFromToken } from "@/lib/utils";
 
 export default function AuthMenu() {
-  const [authStatus, setAuthStatus] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const checkAuth = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setAuthStatus("인증되지 않음");
-        return;
-      }
-
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/check`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-
-      const text = await res.text();
-      setAuthStatus(text);
-    } catch (err) {
-      console.error("인증 확인 실패:", err);
-      setAuthStatus("인증되지 않음");
+  const checkAuth = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsAuthenticated(false);
+      return;
     }
+
+    const user = getUserInfoFromToken(token);
+    if (!user || !user.userId) {
+      setIsAuthenticated(false);
+      localStorage.removeItem("token");
+      return;
+    }
+
+    // JWT가 만료되었는지 확인
+    const currentTime = Date.now() / 1000;
+    if (user.exp && user.exp < currentTime) {
+      setIsAuthenticated(false);
+      localStorage.removeItem("token");
+      return;
+    }
+
+    setIsAuthenticated(true);
   };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setAuthStatus("인증되지 않음");
+    setIsAuthenticated(false);
     navigate("/");
   };
 
   useEffect(() => {
     checkAuth();
-    // 1초마다 인증 상태를 확인
-    const interval = setInterval(checkAuth, 1000);
+    // 1분마다 토큰 유효성 체크 
+    const interval = setInterval(checkAuth, 60000);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="absolute top-4 right-4">
-      {authStatus === "인증됨" ? (
+      {isAuthenticated ? (
         <div className="flex gap-4">
           <Link
             to="/mypage"
@@ -70,4 +73,4 @@ export default function AuthMenu() {
       )}
     </div>
   );
-} 
+}

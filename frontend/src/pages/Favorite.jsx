@@ -10,43 +10,10 @@ import { useNavigate } from "react-router-dom";
 import AuthMenu from "@/components/AuthMenu";
 import Logo from "@/components/Logo";
 
-
-const albumData = [
-  {
-    id: 1,
-    artist: "아티스트",
-    title: "음반명 1",
-    inStock: true,
-    releaseDate: "2025.03.11",
-    price: "50,000원",
-    currency: "₩",
-    isFavorite: true,
-  },
-  {
-    id: 2,
-    artist: "아티스트",
-    title: "음반명 2",
-    inStock: false,
-    releaseDate: "2025.03.11",
-    price: "60,000원",
-    currency: "₩",
-    isFavorite: false,
-  },
-];
-
-const storeData = [
-  { id: "all", name: "전체" },
-  { id: "TowerRecords", name: "타워레코드" },
-  // { id: 2, name: "서울바이닐" },
-  { id: "LPLand", name: "LP랜드" },
-  { id: "Yes24", name: "YES24" },
-];
-
-const navTabs = [
-  { id: 1, name: "New Release", value: "new-release" },
-  { id: 2, name: "Discover", value: "discover" },
-  { id: 3, name: "My Favorite", value: "my-favorite" },
-];
+// 사용하지 않는 더미 데이터 제거
+// const albumData = [...];
+// const storeData = [...];
+// const navTabs = [...];
 
 export default function Favorite() {
   const [favorites, setFavorites] = useState([]);
@@ -56,12 +23,18 @@ export default function Favorite() {
   useEffect(() => {
     // 로그인 체크
     const token = localStorage.getItem("token");
-    const user = getUserInfoFromToken(token);
-    const userId = user.userId;
     if (!token) {
       navigate("/login", { state: { from: { pathname: "/favorite" } } });
       return;
     }
+
+    const user = getUserInfoFromToken(token);
+    if (!user || !user.userId) {
+      navigate("/login", { state: { from: { pathname: "/favorite" } } });
+      return;
+    }
+
+    const userId = user.userId;
 
     const fetchFavorites = async () => {
       const startTime = performance.now();
@@ -76,8 +49,7 @@ export default function Favorite() {
         );
 
         if (!res.ok) {
-          navigate("/login", { state: { from: { pathname: "/favorite" } } });
-          return;
+          throw new Error(`HTTP error! status: ${res.status}`);
         }
 
         const data = await res.json();
@@ -89,24 +61,13 @@ export default function Favorite() {
           - Results Count: ${data.length}
         `);
 
-        // 렌더링 시작 시간 측정
-        const renderStartTime = performance.now();
-
         setFavorites(data);
 
-        // 렌더링 완료 시간 측정
-        const renderEndTime = performance.now();
-        console.log(`[${fetchStartTime}] Favorites Render Performance:
-          - Render Time: ${(renderEndTime - renderStartTime).toFixed(2)}ms
-          - Total Operation Time: ${(renderEndTime - startTime).toFixed(2)}ms
-        `);
       } catch (err) {
         console.error("즐겨찾기 목록 가져오기 실패:", err);
-        const errorTime = performance.now();
-        console.log(`[${fetchStartTime}] Error Performance:
-          - Time until Error: ${(errorTime - startTime).toFixed(2)}ms
-          - Error: ${err.message}
-        `);
+        if (err.message.includes('401')) {
+          navigate("/login", { state: { from: { pathname: "/favorite" } } });
+        }
       } finally {
         setIsLoading(false);
       }
@@ -116,9 +77,6 @@ export default function Favorite() {
   }, [navigate]);
 
   const handleFavoriteToggle = async (album) => {
-    const startTime = performance.now();
-    const toggleStartTime = new Date().toISOString();
-
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/favorites/toggle`,
@@ -142,36 +100,18 @@ export default function Favorite() {
         }
       );
 
-      const toggleEndTime = performance.now();
-
-      // 성능 로깅
-      console.log(`[${toggleStartTime}] Favorite Toggle Performance:
-        - API Call Time: ${(toggleEndTime - startTime).toFixed(2)}ms
-        - Status: ${res.status}
-      `);
-
-      if (res.ok) {
-        // UI 업데이트 시작 시간 측정
-        const updateStartTime = performance.now();
-
-        setFavorites((prevFavorites) =>
-          prevFavorites.filter((item) => item.id !== album.id)
-        );
-
-        // UI 업데이트 완료 시간 측정
-        const updateEndTime = performance.now();
-        console.log(`[${toggleStartTime}] UI Update Performance:
-          - Update Time: ${(updateEndTime - updateStartTime).toFixed(2)}ms
-          - Total Operation Time: ${(updateEndTime - startTime).toFixed(2)}ms
-        `);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
       }
+
+      // 성공적으로 토글된 경우에만 UI 업데이트
+      setFavorites((prevFavorites) =>
+        prevFavorites.filter((item) => item.id !== album.id)
+      );
+
     } catch (err) {
       console.error("즐겨찾기 토글 실패:", err);
-      const errorTime = performance.now();
-      console.log(`[${toggleStartTime}] Error Performance:
-        - Time until Error: ${(errorTime - startTime).toFixed(2)}ms
-        - Error: ${err.message}
-      `);
+      // 사용자에게 에러 피드백을 줄 수 있는 상태 관리 추가 필요
     }
   };
 
@@ -187,8 +127,8 @@ export default function Favorite() {
     <div className="bg-white flex flex-row justify-center w-full min-h-screen">
       <div className="bg-white w-full max-w-screen-xl h-full relative p-4">
         <AuthMenu />
-
         <Logo />
+        
         <div className="w-[220px] h-screen fixed left-0 top-0 flex items-center justify-center bg-white z-10">
           <div className="rotate-[-90deg] origin-center">
             <h1 className="text-[120px] sm:text-[160px] lg:text-[200px] font-bold">
@@ -208,90 +148,102 @@ export default function Favorite() {
             <CardContent className="p-0">
               <Table className="w-full table-fixed">
                 <TableBody>
-                  {favorites.map((album, index) => (
-                    <React.Fragment key={`${album.id}-${index}`}>
-                      <TableRow className="h-[250px] hover:bg-gray-100 cursor-pointer">
-                        <TableCell className="w-[400px] p-0">
-                          <img
-                            src={album.imageUrl}
-                            alt={`${album.title} cover`}
-                            className="w-full h-auto max-h-[350px] object-cover rounded-md shadow"
-                          />
-                        </TableCell>
-
-                        <TableCell>
-                          <div className="flex flex-col items-start mt-4">
-                            <StarIcon
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleFavoriteToggle(album);
+                  {favorites.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8">
+                        즐겨찾기한 앨범이 없습니다.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    favorites.map((album, index) => (
+                      <React.Fragment key={`${album.id}-${index}`}>
+                        <TableRow className="h-[250px] hover:bg-gray-100 cursor-pointer">
+                          <TableCell className="w-[400px] p-0">
+                            <img
+                              src={album.imageUrl}
+                              alt={`${album.title} cover`}
+                              className="w-full h-auto max-h-[350px] object-cover rounded-md shadow"
+                              onError={(e) => {
+                                e.target.src = '/fallback-image.jpg'; // 이미지 로드 실패시 대체 이미지
                               }}
-                              className="w-[25px] h-[25px] text-pink-400 mb-2 cursor-pointer"
-                              fill="currentColor"
                             />
-                            <div className="font-bold text-xl text-black">
-                              <div
-                                className="truncate max-w-[200px]"
-                                title={album.artist}
-                              >
-                                {album.artist}
-                              </div>
-                              <div
-                                className="truncate max-w-[200px]"
-                                title={album.title}
-                              >
-                                {album.title}
+                          </TableCell>
+
+                          <TableCell>
+                            <div className="flex flex-col items-start mt-4">
+                              <StarIcon
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleFavoriteToggle(album);
+                                }}
+                                className="w-[25px] h-[25px] text-pink-400 mb-2 cursor-pointer"
+                                fill="currentColor"
+                              />
+                              <div className="font-bold text-xl text-black">
+                                <div
+                                  className="truncate max-w-[200px]"
+                                  title={album.artist}
+                                >
+                                  {album.artist}
+                                </div>
+                                <div
+                                  className="truncate max-w-[200px]"
+                                  title={album.title}
+                                >
+                                  {album.title}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </TableCell>
+                          </TableCell>
 
-                        <TableCell className="text-center">
-                          <div
-                            className={`font-bold text-xl ${
-                              album.soldOut
-                                ? "text-[#d33b59]"
-                                : "text-[#3e7eff]"
-                            }`}
-                          >
-                            {album.soldOut ? "절판" : "재고 있음"}
-                          </div>
-                        </TableCell>
+                          <TableCell className="text-center">
+                            <div
+                              className={`font-bold text-xl ${
+                                album.soldOut
+                                  ? "text-[#d33b59]"
+                                  : "text-[#3e7eff]"
+                              }`}
+                            >
+                              {album.soldOut ? "절판" : "재고 있음"}
+                            </div>
+                          </TableCell>
 
-                        <TableCell className="text-center">
-                          <div className="font-bold text-xl mb-2">출시일</div>
-                          <div className="opacity-50 text-xl">
-                            {album.releaseDate}
-                          </div>
-                        </TableCell>
+                          <TableCell className="text-center">
+                            <div className="font-bold text-xl mb-2">출시일</div>
+                            <div className="opacity-50 text-xl">
+                              {album.releaseDate}
+                            </div>
+                          </TableCell>
 
-                        <TableCell className="text-center">
-                          <div className="font-bold text-xl mb-2">판매가</div>
-                          <div className="opacity-50 text-xl">
-                            {album.price} {album.currency}
-                          </div>
-                        </TableCell>
+                          <TableCell className="text-center">
+                            <div className="font-bold text-xl mb-2">판매가</div>
+                            <div className="opacity-50 text-xl">
+                              {album.price} {album.currency}
+                            </div>
+                          </TableCell>
 
-                        <TableCell className="text-center">
-                          <a
-                            href={album.productUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 underline hover:text-blue-800"
-                          >
-                            바로가기
-                          </a>
-                        </TableCell>
-                      </TableRow>
-                      {index < favorites.length - 1 && (
-                        <TableRow>
-                          <TableCell colSpan={6} className="p-0">
-                            <Separator className="w-full h-px bg-black opacity-10" />
+                          <TableCell className="text-center">
+                            <a
+                              href={album.productUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 underline hover:text-blue-800"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              바로가기
+                            </a>
                           </TableCell>
                         </TableRow>
-                      )}
-                    </React.Fragment>
-                  ))}
+                        {index < favorites.length - 1 && (
+                          <TableRow>
+                            <TableCell colSpan={6} className="p-0">
+                              <Separator className="w-full h-px bg-black opacity-10" />
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </React.Fragment>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
