@@ -26,3 +26,7 @@ spring:
     swagger-ui:
       path: /swagger-ui
       operations-sorter: method
+
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-here-must-be-at-least-256-bits-long}
+  expiration: ${JWT_EXPIRATION:86400000} # 24시간

@@ -4,20 +4,19 @@ import com.lpsearch.domain.User;
 import com.lpsearch.dto.LoginRequestDto;
 import com.lpsearch.dto.SignupRequestDto;
 import com.lpsearch.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
+import com.lpsearch.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,13 +26,22 @@ public class AuthService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+
+    @Lazy
+    private AuthenticationManager authenticationManager;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       @Lazy AuthenticationManager authenticationManager) {
+                       JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
+
+    @Lazy
+    @Autowired
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
@@ -51,22 +59,12 @@ public class AuthService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void login(LoginRequestDto dto, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
-
-        Authentication auth = authenticationManager.authenticate(token);
-
-        // 세션에 SecurityContext 저장
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        request.getSession().setAttribute(
-                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                SecurityContextHolder.getContext()
-        );
-    }
-
-    public void logout(HttpServletRequest request) {
-        request.getSession().invalidate();
+    public String login(LoginRequestDto dto) {
+        UserDetails userDetails = loadUserByUsername(dto.getUsername());
+        if (!passwordEncoder.matches(dto.getPassword(), userDetails.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        return jwtUtil.generateToken(userDetails);
     }
 
     @Override
