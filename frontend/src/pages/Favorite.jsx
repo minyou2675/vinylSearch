@@ -8,6 +8,8 @@ import { getUserInfoFromToken } from "@/lib/utils";
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthMenu from "@/components/AuthMenu";
+import Logo from "@/components/Logo";
+
 
 const albumData = [
   {
