@@ -34,6 +34,7 @@ export default function SignupForm() {
 
   return (
     <div className="max-w-md mx-auto mt-10">
+            <Logo />
       <h2 className="text-2xl font-bold mb-4">회원가입</h2>
       <input
         name="username"

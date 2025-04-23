@@ -14,6 +14,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthMenu from "@/components/AuthMenu";
 import Logo from "@/components/Logo";
+import { Button } from "@/components/ui/button";
+
 const categories = [
   { id: 1, name: "자유게시판" },
   { id: 2, name: "음반리뷰" },
@@ -91,9 +93,9 @@ export default function BoardPage() {
       {/* Right Content */}
       <div className="w-full max-w-[1800px] px-2">
         <AuthMenu />
-        {/* Search Bar */}
-        <div className="mt-10 mb-6">
-          <div className="relative h-16 bg-[#b0b0b026] rounded-[17px]">
+        {/* Search Bar and Write Button */}
+        <div className="mt-10 mb-6 flex gap-4">
+          <div className="relative h-16 bg-[#b0b0b026] rounded-[17px] flex-1">
             <Search className="absolute w-[38px] h-[38px] top-[13px] left-[15px] text-[#848484]" />
             <Input
               className="h-16 pl-16 bg-transparent border-none text-[#848484] text-[23px] placeholder:text-[#848484]"
@@ -103,6 +105,12 @@ export default function BoardPage() {
               onKeyDown={handleKeyDown}
             />
           </div>
+          <Button 
+            className="h-16 px-8 text-xl bg-[#065570] hover:bg-[#054459]"
+            onClick={() => navigate("/board/write")}
+          >
+            글쓰기
+          </Button>
         </div>
 
         {/* Category Tabs */}

@@ -182,6 +182,8 @@ export default function Favorite() {
     <div className="bg-white flex flex-row justify-center w-full min-h-screen">
       <div className="bg-white w-full max-w-screen-xl h-full relative p-4">
         <AuthMenu />
+
+        <Logo />
         <div className="w-[220px] h-screen fixed left-0 top-0 flex items-center justify-center bg-white z-10">
           <div className="rotate-[-90deg] origin-center">
             <h1 className="text-[120px] sm:text-[160px] lg:text-[200px] font-bold">

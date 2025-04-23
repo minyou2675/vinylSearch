@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import Logo from "@/components/Logo";
 export default function LoginForm() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
@@ -44,7 +44,10 @@ export default function LoginForm() {
 
   return (
     <div className="max-w-md mx-auto mt-10">
+            <Logo />
+
       <h2 className="text-2xl font-bold mb-4">로그인</h2>
+
       <input
         name="username"
         placeholder="아이디"
@@ -65,6 +68,7 @@ export default function LoginForm() {
       <button onClick={handleLogin} className="bg-green-500 text-white px-4 py-2 rounded">
         로그인
       </button>
+
       {message && <p className="mt-4 text-sm text-red-700">{message}</p>}
     </div>
   );

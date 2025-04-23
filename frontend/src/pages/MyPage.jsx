@@ -7,6 +7,8 @@ export default function MyPage() {
     <div className="bg-white flex flex-row justify-center w-full min-h-screen">
       <div className="bg-white w-full max-w-screen-xl h-full relative p-4">
         <AuthMenu />
+      
+        <Logo />
         <div className="mt-20">
           <h1 className="text-3xl font-bold mb-8">My Page</h1>
           <Card>

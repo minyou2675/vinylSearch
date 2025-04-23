@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import React from "react";
 import AuthMenu from "@/components/AuthMenu";
 
-export default function Desktop() {
+export default function Mainpage() {
   // Navigation menu items
   const navItems = [
     { label: "New Release", id: "new-release" },
@@ -23,8 +23,9 @@ export default function Desktop() {
     <div className="bg-white flex flex-row justify-center w-full min-h-screen">
       <div className="bg-white w-full max-w-screen-xl h-full relative p-4">
         <AuthMenu />
+
         {/* Navigation Menu */}
-        <nav className="w-full max-w-[40rem] mx-auto mt-8">
+        <nav className="w-full max-w-md-[20rem] mx-auto mt-8">
           <NavigationMenu className="w-full">
             <NavigationMenuList className="flex justify-between w-full">
               {navItems.map((item, index) => (
