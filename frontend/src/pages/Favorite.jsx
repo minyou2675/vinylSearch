@@ -4,6 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Star as StarIcon } from "lucide-react";
+import { getUserInfoFromToken } from "@/lib/utils";
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthMenu from "@/components/AuthMenu";
