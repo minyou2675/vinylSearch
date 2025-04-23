@@ -7,9 +7,17 @@ services:
     ports:
       - "8888:8888"
     depends_on:
-      - backend
+      - backend-core
+      - backend-board
     restart: unless-stopped
-  backend:
+  backend-board:
+    build:
+      context: ./backend/node-server
+    container_name: lpsearch-board
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+  backend-core:
     build:
       context: ./backend/lpsearch-backend/lpsearch-backend
       dockerfile: Dockerfile
@@ -35,7 +43,8 @@ services:
     ports:
       - "3000:80"
     depends_on:
-      - backend
+      - backend-core
+      - backend-board
     restart: unless-stopped
   redis:
     image: redis:7-alpine
