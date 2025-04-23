@@ -14,13 +14,18 @@ app.use(
 
 // 스프링 서버로 프록시
 app.use(
-  "/api",
+  "/",
   createProxyMiddleware({
     target: SPRING_SERVER_URL, // Docker 서비스 이름 사용
     changeOrigin: true,
-    pathRewrite: {
-      "^/api": "", // '/api' 경로 제거
-    },
+  })
+);
+
+app.use(
+  ["/v3/api-docs", "/swagger-ui", "/swagger-ui/index.html"],
+  createProxyMiddleware({
+    target: SPRING_SERVER_URL,
+    changeOrigin: true,
   })
 );
 
