@@ -7,7 +7,7 @@ import { Search, Star as StarIcon } from "lucide-react";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import AuthMenu from "@/components/AuthMenu";
 import { useNavigate } from "react-router-dom";
-
+import Logo from "@/components/Logo";
 const albumData = [
   {
     id: 1,
@@ -231,17 +231,7 @@ export default function Discover() {
       <div className="bg-white w-full max-w-screen-xl h-full relative p-4">
         <AuthMenu />
         {/* Left Logo Section */}
-        <div className="w-[220px] h-screen fixed left-0 top-0 flex items-center justify-center bg-white z-10">
-          <div className="rotate-[-90deg] origin-center">
-            <h1 className="text-[120px] sm:text-[160px] lg:text-[200px] font-bold">
-              <span className="text-[30px] sm:text-[100px] lg:text-[200px] font-bold text-black mr-2">
-                e
-              </span>
-              <span className="text-[#065570]">LP</span>
-              <span className="text-black">fənt</span>
-            </h1>
-          </div>
-        </div>
+        <Logo />
 
         {/* Right Content */}
         <div className="w-full max-w-[1800px] px-2">

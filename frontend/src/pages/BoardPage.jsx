@@ -3,7 +3,6 @@
 // 게시판 페이지는 게시글 목록을 보여주고, 게시글을 작성하고, 게시글을 수정하고, 게시글을 삭제할 수 있는 기능을 제공합니다.
 // 게시글은 제목, 내용, 작성자, 작성일, 조회수, 좋아요 수, 댓글 수, 첨부파일 등의 정보를 포함합니다.
 // 게시글은 게시판 카테고리에 속합니다.
-// 게시글은 게시판 카테고리에 속합니다.
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,7 +13,7 @@ import { Search, Edit, Trash2 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthMenu from "@/components/AuthMenu";
-
+import Logo from "@/components/Logo";
 const categories = [
   { id: 1, name: "자유게시판" },
   { id: 2, name: "음반리뷰" },
@@ -88,18 +87,7 @@ export default function BoardPage() {
   return (
     <main className="bg-white flex w-full min-h-screen">
       {/* Left Logo Section */}
-      <div className="w-[220px] flex items-center justify-center relative">
-        <div className="rotate-[-90deg] origin-center">
-          <h1 className="text-[120px] sm:text-[160px] lg:text-[200px] font-bold">
-            <span className="text-[30px] sm:text-[100px] lg:text-[200px] bottom-[50px] font-bold text-black mr-2">
-              e
-            </span>
-            <span className="text-[#065570]">LP</span>
-            <span className="text-black">fənt</span>
-          </h1>
-        </div>
-      </div>
-
+        <Logo />
       {/* Right Content */}
       <div className="w-full max-w-[1800px] px-2">
         <AuthMenu />
