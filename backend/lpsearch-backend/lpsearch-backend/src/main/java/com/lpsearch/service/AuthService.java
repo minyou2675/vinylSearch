@@ -3,6 +3,7 @@ package com.lpsearch.service;
 import com.lpsearch.domain.User;
 import com.lpsearch.dto.LoginRequestDto;
 import com.lpsearch.dto.SignupRequestDto;
+import com.lpsearch.dto.UserResponseDto;
 import com.lpsearch.repository.UserRepository;
 import com.lpsearch.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -78,4 +79,12 @@ public class AuthService implements UserDetailsService {
                 .authorities(List.of(new SimpleGrantedAuthority("USER")))
                 .build();
     }
+
+    public UserResponseDto validateTokenAndGetUser(String token) {
+        String username = jwtUtil.extractUsername(token);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자 없음"));
+        return new UserResponseDto(user); // 필요한 정보만 반환
+    }
+
 }

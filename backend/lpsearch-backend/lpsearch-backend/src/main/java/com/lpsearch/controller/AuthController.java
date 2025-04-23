@@ -2,6 +2,7 @@ package com.lpsearch.controller;
 
 import com.lpsearch.dto.LoginRequestDto;
 import com.lpsearch.dto.SignupRequestDto;
+import com.lpsearch.dto.UserResponseDto;
 import com.lpsearch.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +37,13 @@ public class AuthController {
         }
         return ResponseEntity.status(401).body("인증되지 않음");
     }
+
+    @GetMapping("/validate")
+    public ResponseEntity<UserResponseDto> validateToken(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        UserResponseDto dto = authService.validateTokenAndGetUser(token);
+        return ResponseEntity.ok(dto);
+    }
+
 }
 
