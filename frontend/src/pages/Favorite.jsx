@@ -53,6 +53,8 @@ export default function Favorite() {
   useEffect(() => {
     // 로그인 체크
     const token = localStorage.getItem("token");
+    const user = getUserInfoFromToken(token);
+    const userId = user.userId;
     if (!token) {
       navigate("/login", { state: { from: { pathname: "/favorite" } } });
       return;
@@ -64,7 +66,7 @@ export default function Favorite() {
 
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/favorites/1`,
+          `${import.meta.env.VITE_API_URL}/api/favorites/${userId}`,
           {
             credentials: "include",
           }

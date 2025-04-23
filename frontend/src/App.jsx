@@ -12,6 +12,7 @@ import MyPage from "./pages/MyPage";
 import Favorite from "./pages/Favorite";
 import BoardPost from "./pages/BoardPost";
 import BoardPostWrite from "./pages/BoardPostWrite";
+import BoardPostView from "./pages/BoardPostView";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/favorite" element={<Favorite />} />
         <Route path="/board" element={<BoardPost />} />
         <Route path="/board/write" element={<BoardPostWrite />} />
+        <Route path="/board/:id" element={<BoardPostView />} />
       </Routes>
     </BrowserRouter>
   );

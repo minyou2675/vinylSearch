@@ -37,6 +37,12 @@ export default function BoardPostView() {
 
     try {
       const token = localStorage.getItem("token");
+      const user = getUserInfoFromToken(token);
+      const userId = user.userId;
+      if(userId !== post.authorId) {
+        alert("게시글 삭제 권한이 없습니다.");
+        return;
+      }
       const res = await fetch(
         `${import.meta.env.VITE_NODE_SERVER_URL}/api/posts/${id}`,
         {
