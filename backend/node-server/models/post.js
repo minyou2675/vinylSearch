@@ -27,6 +27,25 @@ const Post = sequelize.define('Post', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    views: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    category: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    
 });
 
   // 👇 이 부분을 테스트에서 제외할 수 있게 export만 하고,

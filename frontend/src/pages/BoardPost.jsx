@@ -23,7 +23,7 @@ const categories = [
   { id: 4, name: "공지사항" },
 ];
 
-export default function BoardPage() {
+export default function BoardPost() {
   const [posts, setPosts] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("자유게시판");
@@ -59,8 +59,8 @@ export default function BoardPage() {
     try {
       const res = await fetch(
         `${
-          import.meta.env.VITE_API_URL
-        }/v2/posts?category=${selectedCategory}&keyword=${keyword}&page=${currentPage}`
+          import.meta.env.VITE_NODE_SERVER_URL
+        }/api/posts?category=${selectedCategory}&keyword=${keyword}&page=${currentPage}`
       );
       const data = await res.json();
       setPosts(data);
@@ -140,7 +140,7 @@ export default function BoardPage() {
                   <React.Fragment key={post.id}>
                     <TableRow className="hover:bg-gray-100 cursor-pointer">
                       <TableCell className="font-bold">{post.title}</TableCell>
-                      <TableCell>{post.author}</TableCell>
+                      <TableCell>{post.username}</TableCell>
                       <TableCell>
                         {new Date(post.createdAt).toLocaleDateString()}
                       </TableCell>

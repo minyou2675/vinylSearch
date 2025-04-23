@@ -1,30 +1,44 @@
 const express = require('express');
 const router = express.Router();
+const authenticateJwt = require('../middleware/auth');
 const {Post} = require('../models/post');
 
 //Get 전체 게시글 조회
-router.get("/", async (req, res) => {
-    // 쿼리 파라미터로부터 페이지, 사이즈 가져오기 (기본값: page=1, size=10)
-    const page = parseInt(req.query.page) || 1;
+router.get("/api/posts", async (req, res) => {
+    // 쿼리 파라미터로부터 페이지, 카테고리, 검색어 가져오기
+    const page = parseInt(req.query.page) || 0;
     const size = parseInt(req.query.size) || 10;
-    const offset = (page - 1) * size;
-  
-    const { count, rows } = await Post.findAndCountAll({
-      order: [["id", "DESC"]],
-      limit: size,
-      offset: offset,
-    });
-  
-    res.json({
-      totalItems: count,
-      totalPages: Math.ceil(count / size),
-      currentPage: page,
-      pageSize: size,
-      data: rows,
-    });
-  });
+    const category = req.query.category;
+    const keyword = req.query.keyword || '';
+    const offset = page * size;
+
+    try {
+        const where = {
+            category: category
+        };
+        
+        if (keyword) {
+            where[Op.or] = [
+                { title: { [Op.like]: `%${keyword}%` } },
+                { content: { [Op.like]: `%${keyword}%` } }
+            ];
+        }
+
+        const { count, rows } = await Post.findAndCountAll({
+            where,
+            order: [["createdAt", "DESC"]],
+            limit: size,
+            offset: offset
+        });
+
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ message: '게시글 조회 실패', error: error.message });
+    }
+});
+
 //Get 특정 게시글 조회
-router.get('/:id', async (req, res) => {
+router.get('/api/posts/:id', async (req, res) => {
     const {id} = req.params;
     try{
         const post = await Post.findByPk(id);
@@ -36,10 +50,14 @@ router.get('/:id', async (req, res) => {
 });
 
 //Post 게시글 작성
-router.post('/', async (req, res) => {
-    const {title, content, userId} = req.body;
+router.post('/api/posts/write', authenticateJwt, async (req, res) => {
+    const {title, content} = req.body;
+    const user = req.user; // spring에서 받아온 사용자 정보
     try{
-        const post = await Post.create({title, content, userId});
+        const post = await Post.create({title, 
+            content, 
+            userId: user.id,
+        username: user.username});
         res.status(201).json(post);
     } catch (error) {
         res.status(500).json({message: '게시글 작성 실패', error: error.message});
@@ -47,7 +65,7 @@ router.post('/', async (req, res) => {
 });
 
 //Put 게시글 수정
-router.put('/:id', async (req, res) => {
+router.put('/api/posts/write/:id', async (req, res) => {
     const {id} = req.params;
     const {title, content} = req.body;
     try{
@@ -64,7 +82,7 @@ router.put('/:id', async (req, res) => {
 });
 
 //Delete 게시글 삭제
-router.delete('/:id', async (req, res) => {
+router.delete('/api/posts/delete/:id', async (req, res) => {
     const {id} = req.params;
     try{
         const post = await Post.findByPk(id);

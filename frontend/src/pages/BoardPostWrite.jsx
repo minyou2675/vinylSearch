@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthMenu from "@/components/AuthMenu";
 import Logo from "@/components/Logo";
+import { getToken } from "@/lib/utils";
 
 const categories = [
   { id: 1, name: "자유게시판" },
@@ -15,30 +16,40 @@ const categories = [
   { id: 4, name: "공지사항" },
 ];
 
-export default function BoardPageWrite() {
+export default function BoardPostWrite() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("자유게시판");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  // 로그인 상태 확인
+  // JWT 토큰 기반 로그인 상태 확인
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", { state: { from: { pathname: "/board/write" } } });
+      return;
+    }
+
     const checkAuth = async () => {
       try {
         const res = await fetch(
           `${import.meta.env.VITE_API_URL}/api/auth/check`,
           {
-            credentials: "include",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
         if (!res.ok) {
-          navigate("/login");
+          localStorage.removeItem("token");
+          navigate("/login", { state: { from: { pathname: "/board/write" } } });
         }
         setIsLoggedIn(res.ok);
       } catch (err) {
         console.error("인증 확인 실패:", err);
-        navigate("/login");
+        localStorage.removeItem("token");
+        navigate("/login", { state: { from: { pathname: "/board/write" } } });
       }
     };
     checkAuth();
@@ -47,13 +58,19 @@ export default function BoardPageWrite() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", { state: { from: { pathname: "/board/write" } } });
+      return;
+    }
+
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/v2/posts`, {
+      const res = await fetch(`${import.meta.env.VITE_NODE_SERVER_URL}/api/posts/write`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
-        credentials: "include",
         body: JSON.stringify({
           title,
           content,
@@ -63,6 +80,9 @@ export default function BoardPageWrite() {
 
       if (res.ok) {
         navigate("/board");
+      } else if (res.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login", { state: { from: { pathname: "/board/write" } } });
       }
     } catch (err) {
       console.error("게시글 작성 실패:", err);
