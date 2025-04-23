@@ -16,6 +16,7 @@ export default function Desktop() {
     { label: "New Release", id: "new-release" },
     { label: "Discover", id: "discover" },
     { label: "My Favorite", id: "my-favorite" },
+    { label: "Community", id: "community" },
   ];
 
   return (
@@ -23,7 +24,7 @@ export default function Desktop() {
       <div className="bg-white w-full max-w-screen-xl h-full relative p-4">
         <AuthMenu />
         {/* Navigation Menu */}
-        <nav className="w-full max-w-md mx-auto mt-8">
+        <nav className="w-full max-w-[40rem] mx-auto mt-8">
           <NavigationMenu className="w-full">
             <NavigationMenuList className="flex justify-between w-full">
               {navItems.map((item, index) => (
@@ -31,7 +32,7 @@ export default function Desktop() {
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>
                       <Link
-                        to={item.id === "discover" ? "/discover" : "#"}
+                        to={item.id === "discover" ? "/discover" : item.id === "community" ? "/board" : "#"}
                         className="font-normal text-[#5e5e5e] text-xl sm:text-2xl tracking-[0] leading-7 whitespace-nowrap cursor-pointer"
                       >
                         {item.label}

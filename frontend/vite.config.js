@@ -10,6 +10,7 @@ export default defineConfig({
     },
   },
   server: {
-    historyApiFallback: true, // ✅ 이거 추가!
+    host: true, // 모든 네트워크 인터페이스에서 접근 가능
+    historyApiFallback: true,
   },
 });

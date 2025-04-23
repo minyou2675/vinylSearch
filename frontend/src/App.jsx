@@ -10,6 +10,7 @@ import Signup from "./pages/SignupForm";
 import Login from "./pages/LoginForm";
 import MyPage from "./pages/MyPage";
 import Favorite from "./pages/Favorite";
+import BoardPage from "./pages/BoardPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/favorite" element={<Favorite />} />
+        <Route path="/board" element={<BoardPage />} />
       </Routes>
     </BrowserRouter>
   );
