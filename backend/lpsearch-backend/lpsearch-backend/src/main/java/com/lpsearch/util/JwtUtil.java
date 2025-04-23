@@ -1,6 +1,7 @@
 package com.lpsearch.util;
 
 import com.lpsearch.config.JwtConfig;
+import com.lpsearch.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -50,9 +51,11 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        claims.put("username", user.getUsername());
+        claims.put("userid", user.getId());
+        return createToken(claims,user.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {

@@ -65,7 +65,9 @@ public class AuthService implements UserDetailsService {
         if (!passwordEncoder.matches(dto.getPassword(), userDetails.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        return jwtUtil.generateToken(userDetails);
+        User user = userRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + dto.getUsername()));
+        return jwtUtil.generateToken(user);
     }
 
     @Override
