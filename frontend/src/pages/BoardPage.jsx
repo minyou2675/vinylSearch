@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Edit, Trash2 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import AuthMenu from "@/components/AuthMenu";
 
 const categories = [
   { id: 1, name: "자유게시판" },
@@ -101,6 +102,7 @@ export default function BoardPage() {
 
       {/* Right Content */}
       <div className="w-full max-w-[1800px] px-2">
+        <AuthMenu />
         {/* Search Bar */}
         <div className="mt-10 mb-6">
           <div className="relative h-16 bg-[#b0b0b026] rounded-[17px]">

@@ -32,7 +32,7 @@ export default function Desktop() {
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>
                       <Link
-                        to={item.id === "discover" ? "/discover" : item.id === "community" ? "/board" : "#"}
+                        to={item.id === "discover" ? "/discover" : item.id === "community" ? "/board" : item.id === "my-favorite" ? "/favorite" : "#"}
                         className="font-normal text-[#5e5e5e] text-xl sm:text-2xl tracking-[0] leading-7 whitespace-nowrap cursor-pointer"
                       >
                         {item.label}

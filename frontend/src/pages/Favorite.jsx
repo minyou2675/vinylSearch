@@ -51,6 +51,13 @@ export default function Favorite() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // 로그인 체크
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", { state: { from: { pathname: "/favorite" } } });
+      return;
+    }
+
     const fetchFavorites = async () => {
       const startTime = performance.now();
       const fetchStartTime = new Date().toISOString();
@@ -64,7 +71,7 @@ export default function Favorite() {
         );
 
         if (!res.ok) {
-          navigate("/login");
+          navigate("/login", { state: { from: { pathname: "/favorite" } } });
           return;
         }
 
