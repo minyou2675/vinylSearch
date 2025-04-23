@@ -29,15 +29,22 @@ app.use(
   createProxyMiddleware({
     target: SPRING_SERVER_URL, // Docker 서비스 이름 사용
     changeOrigin: true,
+    pathRewrite: {
+      "^/v1": "",
+    },
   })
 );
 
 // 노드 서버로 프록시
 app.use(
   "/v2",
+  authenticate,
   createProxyMiddleware({
     target: NODE_SERVER_URL,
     changeOrigin: true,
+    pathRewrite: {
+      "^/v2": "",
+    },
   })
 );
 

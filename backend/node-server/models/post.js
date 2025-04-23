@@ -36,11 +36,6 @@ const Post = sequelize.define('Post', {
         allowNull: false,
         defaultValue: 0,
     },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-    },
     category: {
         type: DataTypes.STRING,
         allowNull: false,

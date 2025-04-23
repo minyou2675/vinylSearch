@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const authenticateJwt = require('../middleware/auth');
 const {Post} = require('../models/post');
 
 //Get 전체 게시글 조회
@@ -50,7 +49,7 @@ router.get('/api/posts/:id', async (req, res) => {
 });
 
 //Post 게시글 작성
-router.post('/api/posts/write', authenticateJwt, async (req, res) => {
+router.post('/api/posts/write', async (req, res) => {
     const {title, content} = req.body;
     const user = req.user; // spring에서 받아온 사용자 정보
     try{
