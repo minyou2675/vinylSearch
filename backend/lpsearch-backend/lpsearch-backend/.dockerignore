@@ -1,0 +1,41 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+*.iml
+.vscode
+*.swp
+*.swo
+
+# Build
+target/
+*.jar
+!target/*.jar
+
+# Logs
+*.log
+logs/
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Test
+src/test/
+
+# Documentation
+*.md
+docs/
+
+# Environment
+ 
+*.properties
+!src/main/resources/application*.yml
+
+# Temporary files
+*.tmp
+*.bak
+*.backup 

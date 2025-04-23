@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { createProxyMiddleware } = require("http-proxy-middleware");
-const { sequelize } = require("../node-server/models/post");
+const authenticate = require("./middleware/auth");
 const app = express();
 const SPRING_SERVER_URL = "http://backend-core:8080";
 const NODE_SERVER_URL = "http://backend-board:3001";
