@@ -32,19 +32,33 @@ export default function BoardPost() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  // 로그인 상태 확인
+  // JWT 토큰 기반 로그인 상태 확인
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsLoggedIn(false);
+      return;
+    }
+
     const checkAuth = async () => {
       try {
         const res = await fetch(
           `${import.meta.env.VITE_API_URL}/api/auth/check`,
           {
-            credentials: "include",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
-        setIsLoggedIn(res.ok);
+        if (!res.ok) {
+          localStorage.removeItem("token");
+          setIsLoggedIn(false);
+        } else {
+          setIsLoggedIn(true);
+        }
       } catch (err) {
         console.error("인증 확인 실패:", err);
+        localStorage.removeItem("token");
         setIsLoggedIn(false);
       }
     };
@@ -57,10 +71,16 @@ export default function BoardPost() {
     setIsLoading(true);
 
     try {
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
       const res = await fetch(
         `${
           import.meta.env.VITE_NODE_SERVER_URL
-        }/api/posts?category=${selectedCategory}&keyword=${keyword}&page=${currentPage}`
+        }/api/posts?category=${selectedCategory}&keyword=${keyword}&page=${currentPage}`,
+        {
+          headers
+        }
       );
       const data = await res.json();
       setPosts(data);
@@ -107,7 +127,13 @@ export default function BoardPost() {
           </div>
           <Button 
             className="h-16 px-8 text-xl bg-[#065570] hover:bg-[#054459]"
-            onClick={() => navigate("/board/write")}
+            onClick={() => {
+              if (!isLoggedIn) {
+                navigate("/login", { state: { from: { pathname: "/board/write" } } });
+                return;
+              }
+              navigate("/board/write");
+            }}
           >
             글쓰기
           </Button>
@@ -146,10 +172,12 @@ export default function BoardPost() {
                       </TableCell>
                       <TableCell>조회 {post.views}</TableCell>
                       <TableCell>
-                        <div className="flex gap-2">
-                          <Edit className="w-5 h-5" />
-                          <Trash2 className="w-5 h-5 text-red-500" />
-                        </div>
+                        {isLoggedIn && post.isAuthor && (
+                          <div className="flex gap-2">
+                            <Edit className="w-5 h-5" />
+                            <Trash2 className="w-5 h-5 text-red-500" />
+                          </div>
+                        )}
                       </TableCell>
                     </TableRow>
                     {index < posts.length - 1 && (
