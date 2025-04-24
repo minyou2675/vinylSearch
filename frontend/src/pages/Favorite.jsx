@@ -10,11 +10,6 @@ import { useNavigate } from "react-router-dom";
 import AuthMenu from "@/components/AuthMenu";
 import Logo from "@/components/Logo";
 
-// 사용하지 않는 더미 데이터 제거
-// const albumData = [...];
-// const storeData = [...];
-// const navTabs = [...];
-
 export default function Favorite() {
   const [favorites, setFavorites] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,13 +23,13 @@ export default function Favorite() {
       return;
     }
 
-    const user = getUserInfoFromToken(token);
-    if (!user || !user.userId) {
+    const userInfo = getUserInfoFromToken(token);
+    if (!userInfo || !userInfo.userId) {
       navigate("/login", { state: { from: { pathname: "/favorite" } } });
       return;
     }
 
-    const userId = user.userId;
+    const userId = userInfo.userId;
 
     const fetchFavorites = async () => {
       const startTime = performance.now();
@@ -62,10 +57,9 @@ export default function Favorite() {
         `);
 
         setFavorites(data);
-
       } catch (err) {
         console.error("즐겨찾기 목록 가져오기 실패:", err);
-        if (err.message.includes('401')) {
+        if (err.message.includes("401")) {
           navigate("/login", { state: { from: { pathname: "/favorite" } } });
         }
       } finally {
@@ -89,7 +83,7 @@ export default function Favorite() {
           body: JSON.stringify({
             userId: user.userId,
             title: album.title,
-            artist: album.artist, 
+            artist: album.artist,
             imageUrl: album.imageUrl,
             releaseDate: album.releaseDate,
             productUrl: album.productUrl,
@@ -109,7 +103,6 @@ export default function Favorite() {
       setFavorites((prevFavorites) =>
         prevFavorites.filter((item) => item.id !== album.id)
       );
-
     } catch (err) {
       console.error("즐겨찾기 토글 실패:", err);
       // 사용자에게 에러 피드백을 줄 수 있는 상태 관리 추가 필요
@@ -129,7 +122,7 @@ export default function Favorite() {
       <div className="bg-white w-full max-w-screen-xl h-full relative p-4">
         <AuthMenu />
         <Logo />
-        
+
         <div className="w-[220px] h-screen fixed left-0 top-0 flex items-center justify-center bg-white z-10">
           <div className="rotate-[-90deg] origin-center">
             <h1 className="text-[120px] sm:text-[160px] lg:text-[200px] font-bold">
@@ -165,7 +158,7 @@ export default function Favorite() {
                               alt={`${album.title} cover`}
                               className="w-full h-auto max-h-[350px] object-cover rounded-md shadow"
                               onError={(e) => {
-                                e.target.src = '/fallback-image.jpg'; // 이미지 로드 실패시 대체 이미지
+                                e.target.src = "/fallback-image.jpg"; // 이미지 로드 실패시 대체 이미지
                               }}
                             />
                           </TableCell>

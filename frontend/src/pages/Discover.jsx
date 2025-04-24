@@ -141,6 +141,7 @@ export default function Discover() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
+            userId: userInfo.userId,
             title: album.title,
             artist: album.artist,
             imageUrl: album.imageUrl,
