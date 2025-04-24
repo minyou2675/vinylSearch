@@ -4,56 +4,44 @@ const jwt = require("jsonwebtoken");
 async function authenticate(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res
-      .status(401)
-      .json({ message: "Missing or invalid Authorization header" });
+    return res.status(401).json({ message: "Missing or invalid Authorization header" });
   }
 
   const token = authHeader.split(" ")[1];
 
   try {
-    // JWT 토큰에서 직접 사용자 정보 추출
+    // 1. JWT 디코드 (서명 검증은 하지 않음)
     const decoded = jwt.decode(token);
     if (!decoded || !decoded.userId || !decoded.username) {
-      return res.status(401).json({ message: "Invalid token format" });
+      return res.status(401).json({ message: "Invalid token payload" });
     }
 
-    // 사용자 정보를 req 객체에 추가
+    // 2. 사용자 정보 설정
     req.user = {
       id: decoded.userId,
       username: decoded.username,
     };
 
-    console.log("Authenticated user from token:", req.user);
+    console.log("✅ Token Decoded:", req.user);
 
-    // Spring 서버로 토큰 검증 요청
-    const response = await axios.get(
-      "http://backend-core:8080/api/auth/validate",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        timeout: 5000,
-      }
-    );
-    console.log("Spring validate response:", response.data);
+    // 3. Spring 서버에 토큰 유효성 검사 요청
+    const response = await axios.get("http://backend-core:8080/api/auth/validate", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      timeout: 5000,
+    });
 
     if (response.status === 200) {
+      console.log("✅ Spring 인증 통과:", response.data);
       next();
     } else {
-      return res.status(401).json({ message: "Invalid token" });
+      console.warn("⚠️ Spring 인증 실패:", response.status);
+      return res.status(401).json({ message: "Token validation failed" });
     }
   } catch (err) {
-    console.error("Auth error:", err.message);
-    if (err.code === "ECONNREFUSED") {
-      return res.status(503).json({
-        message: "Authentication service is unavailable",
-        detail: "Cannot connect to the authentication server",
-      });
-    }
-    return res
-      .status(401)
-      .json({ message: "Unauthorized", detail: err.message });
+    console.error("❌ 인증 중 오류:", err.message);
+    return res.status(401).json({ message: "Unauthorized", detail: err.message });
   }
 }
 
