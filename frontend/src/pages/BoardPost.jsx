@@ -40,29 +40,6 @@ export default function BoardPost() {
       return;
     }
 
-    const checkAuth = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/auth/check`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!res.ok) {
-          localStorage.removeItem("token");
-          setIsLoggedIn(false);
-        } else {
-          setIsLoggedIn(true);
-        }
-      } catch (err) {
-        console.error("인증 확인 실패:", err);
-        localStorage.removeItem("token");
-        setIsLoggedIn(false);
-      }
-    };
-    checkAuth();
   }, []);
 
   // 게시글 목록 조회
