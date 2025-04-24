@@ -38,6 +38,7 @@ app.use(
 // 노드 서버로 프록시
 app.use(
   "/v2",
+  authenticate,
   createProxyMiddleware({
     target: NODE_SERVER_URL,
     changeOrigin: true,
@@ -49,6 +50,11 @@ app.use(
       if (req.user) {
         proxyReq.setHeader("x-user-id", req.user.id);
         proxyReq.setHeader("x-user-name", req.user.username);
+        console.log("Proxy headers:", {
+          // 디버깅용 로그
+          "x-user-id": req.user.id,
+          "x-user-name": req.user.username,
+        });
       }
     },
   })

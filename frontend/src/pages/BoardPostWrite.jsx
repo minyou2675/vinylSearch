@@ -30,29 +30,6 @@ export default function BoardPostWrite() {
       navigate("/login", { state: { from: { pathname: "/board/write" } } });
       return;
     }
-
-    const checkAuth = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/auth/check`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!res.ok) {
-          localStorage.removeItem("token");
-          navigate("/login", { state: { from: { pathname: "/board/write" } } });
-        }
-        setIsLoggedIn(res.ok);
-      } catch (err) {
-        console.error("인증 확인 실패:", err);
-        localStorage.removeItem("token");
-        navigate("/login", { state: { from: { pathname: "/board/write" } } });
-      }
-    };
-    checkAuth();
   }, [navigate]);
 
   const handleSubmit = async (e) => {

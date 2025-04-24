@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { Post } = require("../models/post");
-const { Op } = require("sequelize");
 
 //Get 전체 게시글 조회
 router.get("/", async (req, res) => {
@@ -12,29 +11,51 @@ router.get("/", async (req, res) => {
   const keyword = req.query.keyword || "";
   const offset = page * size;
 
+  console.log("Query parameters:", { page, size, category, keyword, offset });
+
   try {
+    // 기본 where 조건
     const where = {};
 
+    // 카테고리 필터링
     if (category) {
       where.category = category;
     }
 
+    // 키워드 검색
     if (keyword) {
-      where[Op.or] = [
-        { title: { [Op.like]: `%${keyword}%` } },
-        { content: { [Op.like]: `%${keyword}%` } },
+      where.$or = [
+        { title: { $like: `%${keyword}%` } },
+        { content: { $like: `%${keyword}%` } },
       ];
     }
 
+    console.log("Where clause:", JSON.stringify(where, null, 2));
+
+    // 게시글 조회
     const { count, rows } = await Post.findAndCountAll({
       where,
       order: [["createdAt", "DESC"]],
       limit: size,
       offset: offset,
+      raw: true, // 순수 객체로 반환
     });
 
+    console.log("Query result:", { count, rows: rows.length });
+
+    // 응답 데이터 포맷팅
+    const formattedRows = rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      content: row.content,
+      username: row.username,
+      views: row.views || 0,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    }));
+
     res.json({
-      content: rows,
+      content: formattedRows,
       totalElements: count,
       totalPages: Math.ceil(count / size),
       page: page,
@@ -42,7 +63,12 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching posts:", error);
-    res.status(500).json({ message: "게시글 조회 실패", error: error.message });
+    console.error("Error stack:", error.stack);
+    res.status(500).json({
+      message: "게시글 조회 실패",
+      error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
   }
 });
 
@@ -60,18 +86,62 @@ router.get("/:id", async (req, res) => {
 
 //Post 게시글 작성
 router.post("/write", async (req, res) => {
-  const { title, content } = req.body;
-  const user = req.user; // spring에서 받아온 사용자 정보
+  console.log("Write post request body:", req.body);
+  console.log("Request headers:", req.headers);
+
+  const { title, content, category } = req.body;
+
+  // 필수 필드 검증
+  if (!title || !content || !category) {
+    return res.status(400).json({
+      message: "필수 필드가 누락되었습니다.",
+      required: ["title", "content", "category"],
+    });
+  }
+
   try {
+    // 헤더에서 사용자 정보 읽기
+    const userId = req.headers["x-user-id"];
+    const username = req.headers["x-user-name"];
+
+    if (!userId || !username) {
+      return res
+        .status(401)
+        .json({ message: "사용자 정보가 유효하지 않습니다." });
+    }
+
     const post = await Post.create({
       title,
       content,
-      userId: user.id,
-      username: user.username,
+      category,
+      userId: parseInt(userId),
+      username: username,
+      views: 0,
     });
-    res.status(201).json(post);
+
+    console.log("Created post:", post);
+
+    res.status(201).json({
+      message: "게시글이 성공적으로 작성되었습니다.",
+      post: {
+        id: post.id,
+        title: post.title,
+        content: post.content,
+        category: post.category,
+        username: post.username,
+        views: post.views,
+        createdAt: post.createdAt,
+      },
+    });
   } catch (error) {
-    res.status(500).json({ message: "게시글 작성 실패", error: error.message });
+    console.error("Error creating post:", error);
+    console.error("Error stack:", error.stack);
+
+    res.status(500).json({
+      message: "게시글 작성 실패",
+      error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
   }
 });
 
