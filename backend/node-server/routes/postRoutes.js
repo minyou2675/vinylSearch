@@ -3,7 +3,7 @@ const router = express.Router();
 const {Post} = require('../models/post');
 
 //Get 전체 게시글 조회
-router.get("/api/posts", async (req, res) => {
+router.get("/", async (req, res) => {
     // 쿼리 파라미터로부터 페이지, 카테고리, 검색어 가져오기
     const page = parseInt(req.query.page) || 0;
     const size = parseInt(req.query.size) || 10;
@@ -37,7 +37,7 @@ router.get("/api/posts", async (req, res) => {
 });
 
 //Get 특정 게시글 조회
-router.get('/api/posts/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
     const {id} = req.params;
     try{
         const post = await Post.findByPk(id);
@@ -49,7 +49,7 @@ router.get('/api/posts/:id', async (req, res) => {
 });
 
 //Post 게시글 작성
-router.post('/api/posts/write', async (req, res) => {
+router.post('/write', async (req, res) => {
     const {title, content} = req.body;
     const user = req.user; // spring에서 받아온 사용자 정보
     try{
@@ -64,7 +64,7 @@ router.post('/api/posts/write', async (req, res) => {
 });
 
 //Put 게시글 수정
-router.put('/api/posts/write/:id', async (req, res) => {
+router.put('/write/:id', async (req, res) => {
     const {id} = req.params;
     const {title, content} = req.body;
     try{
@@ -81,7 +81,7 @@ router.put('/api/posts/write/:id', async (req, res) => {
 });
 
 //Delete 게시글 삭제
-router.delete('/api/posts/delete/:id', async (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
     const {id} = req.params;
     try{
         const post = await Post.findByPk(id);

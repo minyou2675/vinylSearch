@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 
 //라우터 연결
-app.use("/posts", postRoutes);
+app.use("/api/posts", postRoutes);
 
 app.get("/", (req, res) => {
     res.send("Hello World");

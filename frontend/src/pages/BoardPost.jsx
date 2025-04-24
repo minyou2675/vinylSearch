@@ -35,9 +35,10 @@ export default function BoardPost() {
   // JWT 토큰 기반 로그인 상태 확인
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
       setIsLoggedIn(false);
-      return;
     }
 
   }, []);
