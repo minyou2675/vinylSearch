@@ -131,6 +131,14 @@ export default function Discover() {
       return;
     }
 
+    const token = localStorage.getItem("token");
+    const userInfo = getUserInfoFromToken(token);
+
+    if (!token || !userInfo) {
+      navigate("/login");
+      return;
+    }
+
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/favorites/toggle`,
@@ -138,7 +146,7 @@ export default function Discover() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             userId: userInfo.userId,

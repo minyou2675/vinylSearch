@@ -121,20 +121,11 @@ export default function Favorite() {
     <div className="bg-white flex flex-row justify-center w-full min-h-screen">
       <div className="bg-white w-full max-w-screen-xl h-full relative p-4">
         <AuthMenu />
+
+        {/* Logo Section */}
         <Logo />
 
-        <div className="w-[220px] h-screen fixed left-0 top-0 flex items-center justify-center bg-white z-10">
-          <div className="rotate-[-90deg] origin-center">
-            <h1 className="text-[120px] sm:text-[160px] lg:text-[200px] font-bold">
-              <span className="text-[30px] sm:text-[100px] lg:text-[200px] font-bold text-black mr-2">
-                e
-              </span>
-              <span className="text-[#065570]">LP</span>
-              <span className="text-black">fənt</span>
-            </h1>
-          </div>
-        </div>
-
+        {/* Content Section */}
         <div className="w-full max-w-[1800px] px-2">
           <h2 className="text-3xl font-bold mb-6">My Favorites</h2>
 
