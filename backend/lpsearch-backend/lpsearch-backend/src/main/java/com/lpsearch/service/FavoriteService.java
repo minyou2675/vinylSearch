@@ -31,7 +31,7 @@ public class FavoriteService {
 
     public void toggleFavorite(FavoriteRequestDto dto) {
         // 고정 마스터 유저
-        Long userId = 1L;
+        Long userId = dto.getUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자 없음"));
 

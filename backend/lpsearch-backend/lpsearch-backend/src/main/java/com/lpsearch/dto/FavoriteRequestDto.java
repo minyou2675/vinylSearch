@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class FavoriteRequestDto {
+    private Long userId;
     private String title;
     private String artist;
     private String imageUrl;

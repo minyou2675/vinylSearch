@@ -87,8 +87,9 @@ export default function Favorite() {
           },
           credentials: "include",
           body: JSON.stringify({
+            userId: user.userId,
             title: album.title,
-            artist: album.artist,
+            artist: album.artist, 
             imageUrl: album.imageUrl,
             releaseDate: album.releaseDate,
             productUrl: album.productUrl,
