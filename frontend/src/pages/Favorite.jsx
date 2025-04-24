@@ -32,36 +32,29 @@ export default function Favorite() {
     const userId = userInfo.userId;
 
     const fetchFavorites = async () => {
-      const startTime = performance.now();
-      const fetchStartTime = new Date().toISOString();
-
       try {
+        const token = localStorage.getItem("token");
         const res = await fetch(
           `${import.meta.env.VITE_API_URL}/api/favorites/${userId}`,
           {
-            credentials: "include",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
 
         if (!res.ok) {
+          if (res.status === 401) {
+            navigate("/login", { state: { from: { pathname: "/favorite" } } });
+            return;
+          }
           throw new Error(`HTTP error! status: ${res.status}`);
         }
 
         const data = await res.json();
-        const fetchEndTime = performance.now();
-
-        // 성능 로깅
-        console.log(`[${fetchStartTime}] Favorites Fetch Performance:
-          - Fetch Time: ${(fetchEndTime - startTime).toFixed(2)}ms
-          - Results Count: ${data.length}
-        `);
-
         setFavorites(data);
       } catch (err) {
         console.error("즐겨찾기 목록 가져오기 실패:", err);
-        if (err.message.includes("401")) {
-          navigate("/login", { state: { from: { pathname: "/favorite" } } });
-        }
       } finally {
         setIsLoading(false);
       }
