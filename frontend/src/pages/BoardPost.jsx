@@ -40,7 +40,6 @@ export default function BoardPost() {
     } else {
       setIsLoggedIn(false);
     }
-
   }, []);
 
   // 게시글 목록 조회
@@ -57,13 +56,24 @@ export default function BoardPost() {
           import.meta.env.VITE_NODE_SERVER_URL
         }/api/posts?category=${selectedCategory}&keyword=${keyword}&page=${currentPage}`,
         {
-          headers
+          headers,
         }
       );
       const data = await res.json();
-      setPosts(data);
+
+      // 데이터가 배열인지 확인하고, 필요한 경우 배열로 변환
+      if (Array.isArray(data)) {
+        setPosts(data);
+      } else if (data.content && Array.isArray(data.content)) {
+        // 페이지네이션 응답인 경우
+        setPosts(data.content);
+      } else {
+        console.error("Unexpected API response format:", data);
+        setPosts([]);
+      }
     } catch (err) {
       console.error("게시글 조회 실패:", err);
+      setPosts([]);
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +97,7 @@ export default function BoardPost() {
   return (
     <main className="bg-white flex w-full min-h-screen">
       {/* Left Logo Section */}
-        <Logo />
+      <Logo />
       {/* Right Content */}
       <div className="w-full max-w-[1800px] px-2">
         <AuthMenu />
@@ -103,11 +113,13 @@ export default function BoardPost() {
               onKeyDown={handleKeyDown}
             />
           </div>
-          <Button 
+          <Button
             className="h-16 px-8 text-xl bg-[#065570] hover:bg-[#054459]"
             onClick={() => {
               if (!isLoggedIn) {
-                navigate("/login", { state: { from: { pathname: "/board/write" } } });
+                navigate("/login", {
+                  state: { from: { pathname: "/board/write" } },
+                });
                 return;
               }
               navigate("/board/write");

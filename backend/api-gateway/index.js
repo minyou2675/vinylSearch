@@ -38,31 +38,34 @@ app.use(
 // 노드 서버로 프록시
 app.use(
   "/v2",
-  authenticate,
   createProxyMiddleware({
     target: NODE_SERVER_URL,
     changeOrigin: true,
     pathRewrite: {
       "^/v2": "",
     },
+    onProxyReq: (proxyReq, req, res) => {
+      // 인증된 사용자 정보를 헤더에 추가
+      if (req.user) {
+        proxyReq.setHeader("x-user-id", req.user.id);
+        proxyReq.setHeader("x-user-name", req.user.username);
+      }
+    },
   })
 );
-
 
 app.listen(8888, () => {
   console.log("API Gateway is running on port 8888");
 });
 
-
 // 테이블 동기화
 (async () => {
-    try{
-        await sequelize.authenticate();
-        console.log('DB 연결 성공');
-        await sequelize.sync({alter: true}); //테이블 자동 생성
-        console.log('테이블 동기화 완료');
-    } catch (error) {
-        console.error('DB 연결 실패:', error);
-    }
+  try {
+    await sequelize.authenticate();
+    console.log("DB 연결 성공");
+    await sequelize.sync({ alter: true }); //테이블 자동 생성
+    console.log("테이블 동기화 완료");
+  } catch (error) {
+    console.error("DB 연결 실패:", error);
+  }
 })();
-
