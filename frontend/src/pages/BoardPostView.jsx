@@ -108,6 +108,11 @@ export default function BoardPostView() {
               </div>
             </CardContent>
           </Card>
+          <div className="flex justify-center mt-4">
+            <Button onClick={() => navigate("/board")}>
+              목록으로 돌아가기
+            </Button>
+          </div>
         </div>
       </div>
     </main>
