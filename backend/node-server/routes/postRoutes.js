@@ -78,6 +78,8 @@ router.get("/:id", async (req, res) => {
   try {
     const post = await Post.findByPk(id);
     if (!post) return res.status(404).json({ message: "게시글 조회 실패" });
+    post.views++;
+    await post.save();
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: "게시글 조회 실패", error: error.message });
