@@ -4,7 +4,9 @@ const jwt = require("jsonwebtoken");
 async function authenticate(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Missing or invalid Authorization header" });
+    return res
+      .status(401)
+      .json({ message: "Missing or invalid Authorization header" });
   }
 
   const token = authHeader.split(" ")[1];
@@ -17,20 +19,25 @@ async function authenticate(req, res, next) {
     }
 
     // 2. 사용자 정보 설정
-    req.user = {
-      id: decoded.userId,
-      username: decoded.username,
-    };
+    req.headers["x-user-id"] = decoded.userId;
+    req.headers["x-user-name"] = decoded.username;
+    // req.user = {
+    //   id: decoded.userId,
+    //   username: decoded.username,
+    // };
 
     console.log("✅ Token Decoded:", req.user);
 
     // 3. Spring 서버에 토큰 유효성 검사 요청
-    const response = await axios.get("http://backend-core:8080/api/auth/validate", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      timeout: 5000,
-    });
+    const response = await axios.get(
+      "http://backend-core:8080/api/auth/validate",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        timeout: 5000,
+      }
+    );
 
     if (response.status === 200) {
       console.log("✅ Spring 인증 통과:", response.data);
@@ -41,7 +48,9 @@ async function authenticate(req, res, next) {
     }
   } catch (err) {
     console.error("❌ 인증 중 오류:", err.message);
-    return res.status(401).json({ message: "Unauthorized", detail: err.message });
+    return res
+      .status(401)
+      .json({ message: "Unauthorized", detail: err.message });
   }
 }
 

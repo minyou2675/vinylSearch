@@ -46,6 +46,7 @@ app.use(
       "^/v2": "",
     },
     onProxyReq: (proxyReq, req, res) => {
+      console.log("🔥 onProxyReq 진입 확인");
       // 인증된 사용자 정보를 헤더에 추가
       if (req.user) {
         proxyReq.setHeader("x-user-id", req.user.id);
@@ -55,6 +56,10 @@ app.use(
           "x-user-id": req.user.id,
           "x-user-name": req.user.username,
         });
+      } else {
+        console.warn(
+          "Authenticate Middleware 에러 발생 ------------> req.user가 없습니다."
+        );
       }
     },
   })

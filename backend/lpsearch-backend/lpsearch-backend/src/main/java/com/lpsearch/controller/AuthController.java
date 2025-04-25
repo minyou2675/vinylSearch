@@ -42,6 +42,7 @@ public class AuthController {
     public ResponseEntity<UserResponseDto> validateToken(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         UserResponseDto dto = authService.validateTokenAndGetUser(token);
+        System.out.println("Spring Toekn Validate 결과 확인 ------------> UserResponseDto: " + dto);
         return ResponseEntity.ok(dto);
     }
 
