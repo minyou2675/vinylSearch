@@ -39,7 +39,7 @@ export default function BoardPostView() {
       const token = localStorage.getItem("token");
       const user = getUserInfoFromToken(token);
       const userId = user.userId;
-      if(userId !== post.authorId) {
+      if (userId !== post.authorId) {
         alert("게시글 삭제 권한이 없습니다.");
         return;
       }

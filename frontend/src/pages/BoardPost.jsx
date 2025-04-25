@@ -17,11 +17,10 @@ import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 
 const categories = [
-  { id: 1, name: "전체" },
-  { id: 2, name: "자유게시판" },
-  { id: 3, name: "음반리뷰" },
-  { id: 4, name: "중고거래" },
-  { id: 5, name: "공지사항" },
+  { id: 1, name: "자유게시판" },
+  { id: 2, name: "음반리뷰" },
+  { id: 3, name: "중고거래" },
+  { id: 4, name: "공지사항" },
 ];
 
 export default function BoardPost() {
@@ -29,6 +28,7 @@ export default function BoardPost() {
   const [keyword, setKeyword] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("자유게시판");
   const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
@@ -42,12 +42,6 @@ export default function BoardPost() {
       setIsLoggedIn(false);
     }
   }, []);
-
-  //게시글 필터링
-  const filteredPosts =
-    selectedCategory === "전체"
-      ? posts
-      : posts.filter((post) => post.category === selectedCategory);
 
   // 게시글 목록 조회
   const fetchPosts = async () => {
@@ -101,6 +95,17 @@ export default function BoardPost() {
     }
   };
 
+  //카테고리 변경
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setCurrentPage(0);
+  };
+
+  //페이지 변경
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <main className="bg-white flex w-full min-h-screen">
       {/* Left Logo Section */}
@@ -138,13 +143,16 @@ export default function BoardPost() {
 
         {/* Category Tabs */}
         <div className="mb-6">
-          <Tabs value={selectedCategory} className="w-full">
+          <Tabs
+            value={selectedCategory}
+            onValueChange={handleCategoryChange}
+            className="w-full"
+          >
             <TabsList className="bg-transparent gap-8 justify-center">
               {categories.map((category) => (
                 <TabsTrigger
                   key={category.id}
                   value={category.name}
-                  onClick={() => setSelectedCategory(category.name)}
                   className="text-xl text-[#5e5e5e] data-[state=active]:font-bold"
                 >
                   {category.name}
@@ -159,10 +167,17 @@ export default function BoardPost() {
           <CardContent className="p-0">
             <Table>
               <TableBody>
-                {filteredPosts.map((post, index) => (
+                {posts.map((post, index) => (
                   <React.Fragment key={post.id}>
                     <TableRow className="hover:bg-gray-100 cursor-pointer">
-                      <TableCell className="font-bold">{post.title}</TableCell>
+                      <TableCell className="font-bold">
+                        <span
+                          className="cursor-pointer hover:underline"
+                          onClick={() => navigate(`/board/${post.id}`)}
+                        >
+                          {post.title}
+                        </span>
+                      </TableCell>
                       <TableCell>{post.username}</TableCell>
                       <TableCell>
                         {new Date(post.createdAt).toLocaleDateString()}
@@ -197,7 +212,7 @@ export default function BoardPost() {
             {[...Array(5)].map((_, i) => (
               <button
                 key={i}
-                onClick={() => setCurrentPage(i)}
+                onClick={() => handlePageChange(i)}
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-lg
                   ${
                     currentPage === i
