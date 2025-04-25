@@ -17,10 +17,11 @@ import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 
 const categories = [
-  { id: 1, name: "자유게시판" },
-  { id: 2, name: "음반리뷰" },
-  { id: 3, name: "중고거래" },
-  { id: 4, name: "공지사항" },
+  { id: 1, name: "전체" },
+  { id: 2, name: "자유게시판" },
+  { id: 3, name: "음반리뷰" },
+  { id: 4, name: "중고거래" },
+  { id: 5, name: "공지사항" },
 ];
 
 export default function BoardPost() {
@@ -41,6 +42,12 @@ export default function BoardPost() {
       setIsLoggedIn(false);
     }
   }, []);
+
+  //게시글 필터링
+  const filteredPosts =
+    selectedCategory === "전체"
+      ? posts
+      : posts.filter((post) => post.category === selectedCategory);
 
   // 게시글 목록 조회
   const fetchPosts = async () => {
@@ -152,7 +159,7 @@ export default function BoardPost() {
           <CardContent className="p-0">
             <Table>
               <TableBody>
-                {posts.map((post, index) => (
+                {filteredPosts.map((post, index) => (
                   <React.Fragment key={post.id}>
                     <TableRow className="hover:bg-gray-100 cursor-pointer">
                       <TableCell className="font-bold">{post.title}</TableCell>
