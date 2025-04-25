@@ -11,14 +11,24 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
+import com.lpsearch.service.AlbumSaveService;
 
 @Component
 @RequiredArgsConstructor
-public class RedisToDbBatchScheduler {
+public class RedisToDbBatchScheduler implements BatchJob {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final AlbumSaveService albumSaveService;
 
+    @Override
+    public String getJobName() {
+        return "RedisToDbBatchScheduler";
+    }
+
+    @Override
+    public void runNow() {  
+        saveRedisSearchResultsToDb();
+    }
     // 30분마다 실행 (예시)
     @Scheduled(cron = "0 0/30 * * * *") // 매 30분마다
     public void saveRedisSearchResultsToDb() {

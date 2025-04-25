@@ -13,6 +13,8 @@ import Favorite from "./pages/Favorite";
 import BoardPost from "./pages/BoardPost";
 import BoardPostWrite from "./pages/BoardPostWrite";
 import BoardPostView from "./pages/BoardPostView";
+import BatchDashboard from "./pages/BatchDashBoard";
+import BatchLogs from "./pages/BatchLogs";
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
         <Route path="/board" element={<BoardPost />} />
         <Route path="/board/write" element={<BoardPostWrite />} />
         <Route path="/board/:id" element={<BoardPostView />} />
+        <Route path="/batch" element={<BatchDashboard />} />
+        <Route path="/batch/:jobName/logs" element={<BatchLogs />} />
       </Routes>
     </BrowserRouter>
   );
