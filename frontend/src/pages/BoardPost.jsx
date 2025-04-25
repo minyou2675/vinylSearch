@@ -172,7 +172,7 @@ export default function BoardPost() {
                     <TableRow className="hover:bg-gray-100 cursor-pointer">
                       <TableCell className="font-bold">
                         <span
-                          className="cursor-pointer hover:underline"
+                          className="cursor-pointer text-[20px] font-semibold text-gray-800 hover:underline hover:text-[#065570] transition-colors"
                           onClick={() => navigate(`/board/${post.id}`)}
                         >
                           {post.title}
