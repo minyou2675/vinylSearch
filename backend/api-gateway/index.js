@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const authenticate = require("./middleware/auth");
+const swaggerUi = require("swagger-ui-express");
 const app = express();
 const SPRING_SERVER_URL = "http://backend-core:8080";
 const NODE_SERVER_URL = "http://backend-board:3001";
@@ -14,14 +15,21 @@ app.use(
   })
 );
 
-// 스웨거 프록시
-app.use(
-  ["/v3/api-docs", "/swagger-ui", "/swagger-ui/index.html"],
-  createProxyMiddleware({
-    target: SPRING_SERVER_URL,
-    changeOrigin: true,
-  })
-);
+//Swagger UI 통합
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(undefined, {
+  swaggerOptions: {
+    urls: [
+      {
+        url: 'http://localhost:8888/v1/v3/api-docs',   // Spring Auth 서버 Swagger
+        name: 'Search / Auth / Batch API (Spring)'
+      },
+      {
+        url: 'http://localhost:8888/v2/api-docs',     // Node Board 서버 Swagger
+        name: 'Board API (Node)'
+      }
+    ]
+  }
+}));
 
 // 스프링 서버로 프록시
 app.use(
