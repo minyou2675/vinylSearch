@@ -33,7 +33,7 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(undefined, {
 
 // 스프링 서버로 프록시
 app.use(
-  "/v1",
+  ["/v1","/api/auth","/api/batch","/api/search","/api/favorites"],
   createProxyMiddleware({
     target: SPRING_SERVER_URL, // Docker 서비스 이름 사용
     changeOrigin: true,
@@ -45,7 +45,7 @@ app.use(
 
 // 노드 서버로 프록시
 app.use(
-  "/v2",
+  ["/v2","/api/posts"],
   authenticate,
   createProxyMiddleware({
     target: NODE_SERVER_URL,
@@ -54,7 +54,7 @@ app.use(
       "^/v2": "",
     },
     onProxyReq: (proxyReq, req, res) => {
-      console.log("🔥 onProxyReq 진입 확인");
+      console.log("onProxyReq 진입 확인");
       // 인증된 사용자 정보를 헤더에 추가
       if (req.user) {
         proxyReq.setHeader("x-user-id", req.user.id);
