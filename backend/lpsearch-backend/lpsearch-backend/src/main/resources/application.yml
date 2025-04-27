@@ -15,6 +15,16 @@ spring:
   redis:
     host: ${REDIS_HOST:lpsearch-redis}
     port: ${REDIS_PORT:6379}
+    # 커넥션 타임아웃 설정
+    connect-timeout: 5s
+    timeout: 5s
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+      shutdown-timeout: 100ms
   cache:
     type: redis
   sql:

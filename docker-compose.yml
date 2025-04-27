@@ -30,7 +30,6 @@ services:
       - CORS_ORIGIN=http://localhost:5173
     depends_on:
       - lpsearch-mysql-board
-      - lpsearch-redis
     restart: unless-stopped
   lpsearch-core-api:
     build:
@@ -46,6 +45,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=1234
       - SPRING_REDIS_HOST=lpsearch-redis
       - SPRING_REDIS_PORT=6379
+      - REDIS_HOST=lpsearch-redis
+      - REDIS_PORT=6379
     depends_on:
       - lpsearch-redis
       - lpsearch-mysql-core
