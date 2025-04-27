@@ -21,21 +21,17 @@ async function authenticate(req, res, next) {
     // 2. 사용자 정보 설정
     req.headers["x-user-id"] = decoded.userId;
     req.headers["x-user-name"] = decoded.username;
-    // req.user = {
-    //   id: decoded.userId,
-    //   username: decoded.username,
-    // };
 
     console.log("✅ Token Decoded:", req.user);
 
     // 3. Spring 서버에 토큰 유효성 검사 요청
     const response = await axios.get(
-      "http://backend-core:8080/api/auth/validate",
+      "http://lpsearch-core-api:8080/api/auth/validate",
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        timeout: 5000,
+        timeout: 10000, // Increase timeout to 10 seconds
       }
     );
 

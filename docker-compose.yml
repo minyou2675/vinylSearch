@@ -1,19 +1,19 @@
 version: "3.8"
 
 services:
-  gateway:
+  lpsearch-gateway:
     build:
       context: ./backend/api-gateway
     ports:
       - "8888:8888"
     depends_on:
-      - backend-core
-      - backend-board
+      - lpsearch-core-api
+      - lpsearch-board-api
     restart: unless-stopped
-  backend-board:
+  lpsearch-board-api:
     build:
       context: ./backend/node-server
-    container_name: lpsearch-board
+    container_name: lpsearch-board-api
     ports:
       - "3001:3001"
     environment:
@@ -29,26 +29,26 @@ services:
       - JWT_SECRET=your_jwt_secret_key
       - CORS_ORIGIN=http://localhost:5173
     depends_on:
-      - mysql-board
-      - redis
+      - lpsearch-mysql-board
+      - lpsearch-redis
     restart: unless-stopped
-  backend-core:
+  lpsearch-core-api:
     build:
       context: ./backend/lpsearch-backend/lpsearch-backend
       dockerfile: Dockerfile
     image: lpsearch-backend:latest
-    container_name: lpsearch-backend
+    container_name: lpsearch-core-api
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/lpsearch?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://lpsearch-mysql-core:3306/lpsearch_core?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=1234
-      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_HOST=lpsearch-redis
       - SPRING_REDIS_PORT=6379
     depends_on:
-      - redis
-      - mysql
+      - lpsearch-redis
+      - lpsearch-mysql-core
     restart: always
   frontend:
     build:
@@ -58,30 +58,30 @@ services:
     ports:
       - "3000:80"
     depends_on:
-      - backend-core
-      - backend-board
+      - lpsearch-core-api
+      - lpsearch-board-api
     restart: unless-stopped
-  redis:
+  lpsearch-redis:
     image: redis:7-alpine
     container_name: lpsearch-redis
     ports:
       - "6379:6379"
     restart: always
 
-  mysql:
+  lpsearch-mysql-core:
     image: mysql:8
-    container_name: lpsearch-mysql
+    container_name: lpsearch-mysql-core
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: lpsearch
+      MYSQL_DATABASE: lpsearch_core
       TZ: Asia/Seoul
     volumes:
       - mysql-data:/var/lib/mysql
     restart: always
 
-  mysql-board:
+  lpsearch-mysql-board:
     image: mysql:8
     container_name: lpsearch-mysql-board
     ports:

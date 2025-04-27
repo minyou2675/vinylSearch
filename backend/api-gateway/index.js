@@ -3,8 +3,8 @@ const cors = require("cors");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const authenticate = require("./middleware/auth");
 const app = express();
-const SPRING_SERVER_URL = "http://backend-core:8080";
-const NODE_SERVER_URL = "http://backend-board:3001";
+const SPRING_SERVER_URL = "http://lpsearch-core-api:8080";
+const NODE_SERVER_URL = "http://lpsearch-board-api:3001";
 
 // CORS 설정
 app.use(
@@ -68,15 +68,3 @@ app.use(
 app.listen(8888, () => {
   console.log("API Gateway is running on port 8888");
 });
-
-// 테이블 동기화
-(async () => {
-  try {
-    await sequelize.authenticate();
-    console.log("DB 연결 성공");
-    await sequelize.sync({ alter: true }); //테이블 자동 생성
-    console.log("테이블 동기화 완료");
-  } catch (error) {
-    console.error("DB 연결 실패:", error);
-  }
-})();
