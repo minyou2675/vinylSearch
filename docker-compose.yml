@@ -16,6 +16,21 @@ services:
     container_name: lpsearch-board
     ports:
       - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - MYSQL_HOST=lpsearch-mysql-board
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=1234
+      - MYSQL_DATABASE=lpsearch_board
+      - REDIS_HOST=lpsearch-redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=your_jwt_secret_key
+      - CORS_ORIGIN=http://localhost:5173
+    depends_on:
+      - mysql-board
+      - redis
     restart: unless-stopped
   backend-core:
     build:
@@ -65,6 +80,15 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     restart: always
+
+  mysql-board:
+    image: mysql:8
+    container_name: lpsearch-mysql-board
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: lpsearch_board
 
 volumes:
   mysql-data:
