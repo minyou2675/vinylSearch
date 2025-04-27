@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.lpsearch.domain.UserRole;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -52,6 +54,7 @@ public class AuthService implements UserDetailsService {
         user.setUsername(dto.getUsername());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setEmail(dto.getEmail());
+        user.setRole(UserRole.USER);
         user.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(user);
